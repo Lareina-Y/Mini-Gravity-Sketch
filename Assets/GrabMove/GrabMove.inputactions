@@ -1,0 +1,56 @@
+{
+    "name": "GrabMove",
+    "maps": [
+        {
+            "name": "GrabMove",
+            "id": "b4160043-8e21-4d45-abf7-f105ac6833d6",
+            "actions": [
+                {
+                    "name": "GrabMove",
+                    "type": "Button",
+                    "id": "db16de03-6f6f-439f-a7ee-0f1fdf2ce096",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "Grab Modifier",
+                    "id": "279222bf-d94c-4023-8125-64b492e1389e",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GrabMove",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Binding",
+                    "id": "1b2d3628-973c-40b3-86dc-12ff7c8d747b",
+                    "path": "<XRController>{LeftHand}/gripButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GrabMove",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Modifier",
+                    "id": "a74df23f-2263-4cac-a2d4-66db9e056214",
+                    "path": "<XRController>{RightHand}/gripButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GrabMove",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
