@@ -15,13 +15,11 @@ public class SelectObjLogic : MonoBehaviour
     public Transform defaultCenter;
 
     private float currentRadius;
-    private Vector3 initialCenterOffset;
     private List<Collider> selectedObjects = new List<Collider>();
 
     private void Awake()
     {
         currentRadius = defaultRadius;
-        initialCenterOffset = Vector3.zero;
     }
 
     private void Update()
@@ -42,9 +40,9 @@ public class SelectObjLogic : MonoBehaviour
         // Use Physics.OverlapSphere to detect objects within the selection sphere
         Vector3 sphereCenter = defaultCenter.position;
 
-        if (currentRadius <= defaultRadius)
+        if (currentRadius < defaultRadius)
         {
-            sphereCenter += initialCenterOffset * (currentRadius / defaultRadius);
+            sphereCenter.x += currentRadius - defaultRadius;
         }
 
         Collider[] colliders = Physics.OverlapSphere(sphereCenter, currentRadius);
@@ -64,7 +62,6 @@ public class SelectObjLogic : MonoBehaviour
         // Update the current radius based on the input value
         currentRadius += radiusChange;
         currentRadius = Mathf.Clamp(currentRadius, minRadius, maxRadius);
-        Debug.Log($"Current radius updated: {currentRadius}");
     }
 
     public float getCurrentRadius()

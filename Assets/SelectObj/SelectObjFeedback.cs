@@ -43,11 +43,18 @@ public class SelectObjFeedback : MonoBehaviour
 
     private void Update()
     {
-        if (sphereTransform is not null)
+        Vector3 sphereCenter = _selectObjLogic.defaultCenter.position;
+
+        // Dynamically adjust for smaller radius
+        float currentRadius = _selectObjLogic.getCurrentRadius();
+        float defaultRadius = _selectObjLogic.defaultRadius;
+        if (currentRadius < defaultRadius)
         {
-            sphereTransform.position = _selectObjLogic.defaultCenter.position;
-            sphereTransform.localScale = Vector3.one * (_selectObjLogic.getCurrentRadius() * 2); // Diameter of sphere
+            sphereCenter.x += currentRadius - defaultRadius;
         }
+
+        sphereTransform.position = sphereCenter;
+        sphereTransform.localScale = Vector3.one * (currentRadius * 2); // Diameter of sphere
     }
 
     private void CreateFeedbackSphere()
