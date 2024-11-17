@@ -43,7 +43,6 @@ public class SelectObjFeedback : MonoBehaviour
 
     private void Update()
     {
-        // Update the sphere's radius and position based on SphereSelectLogic
         if (sphereTransform is not null)
         {
             sphereTransform.position = _selectObjLogic.defaultCenter.position;
@@ -104,11 +103,10 @@ public class SelectObjFeedback : MonoBehaviour
 
     private void OnSelectExited(SelectExitEventArgs args)
     {
-        // Show the sphere and reset the color when the selection ends
+        // Show the sphere when the selection ends
         if (sphereRenderer != null)
         {
             sphereRenderer.enabled = true;
-            sphereRenderer.material.color = defaultColor;
         }
     }
 }

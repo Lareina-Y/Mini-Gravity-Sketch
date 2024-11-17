@@ -10,7 +10,8 @@ public class SelectObjLogic : MonoBehaviour
     public float maxRadius = 0.3f;
     public float defaultRadius = 0.04f;
 
-    // Transform indicating the default position for the sphere center, set to the right controller grip button.
+    // Transform indicating the default position for the sphere center,
+    // set to the right controller grip button.
     public Transform defaultCenter;
 
     private float currentRadius;
@@ -62,18 +63,12 @@ public class SelectObjLogic : MonoBehaviour
     {
         // Update the current radius based on the input value
         currentRadius += radiusChange;
-
-        // Clamp the radius between the minimum and maximum values
         currentRadius = Mathf.Clamp(currentRadius, minRadius, maxRadius);
+        Debug.Log($"Current radius updated: {currentRadius}");
     }
 
     public float getCurrentRadius()
     {
         return currentRadius;
-    }
-    
-    public List<Collider> GetSelectedObjects()
-    {
-        return selectedObjects;
     }
 }
