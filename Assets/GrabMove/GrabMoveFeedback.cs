@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
 /// <summary>
 /// Generate feedback for the grab move technique
@@ -39,12 +40,11 @@ public class GrabMoveFeedback : MonoBehaviour
         if (GetComponent<GrabMoveLogic>().isGrabMoving)
         {
             StartVisualization();
-            // TriggerVibrationFeedback();
+            TriggerVibrationFeedback();
         }
         else
         {
             ClearVisualization();
-            // StopVibrationFeedback();
         }
     }
 
@@ -117,11 +117,9 @@ public class GrabMoveFeedback : MonoBehaviour
     
     private void TriggerVibrationFeedback()
     {
-        
-    }
+        float amplitude = Mathf.Min(1f / m_CurrScale, 1.0f);
 
-    private void StopVibrationFeedback()
-    {
-        
+        m_RightTransform.gameObject.GetComponent<HapticImpulsePlayer>().SendHapticImpulse(amplitude, 0.01f);
+        m_LeftTransform.gameObject.GetComponent<HapticImpulsePlayer>().SendHapticImpulse(amplitude, 0.01f);
     }
 }
