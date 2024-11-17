@@ -1,6 +1,12 @@
 using TMPro;
 using UnityEngine;
+using Quaternion = UnityEngine.Quaternion;
+using Vector3 = UnityEngine.Vector3;
 
+/// <summary>
+/// Generate feedback for the grab move technique
+/// by rendering a line between the controllers and a sphere as pivot.
+/// </summary>
 public class GrabMoveFeedback : MonoBehaviour
 {
     [SerializeField] Color m_PivotColor;
@@ -9,8 +15,13 @@ public class GrabMoveFeedback : MonoBehaviour
     private Transform m_LeftTransform;
     private Transform m_RightTransform;
     
+    private GameObject m_PivotSphere;
     private LineRenderer m_LineRenderer;
+    private MeshRenderer m_SphereRenderer;
     private TextMeshPro m_ScaleText;
+    
+    private float m_PivotScale = 0.006f;
+    private float m_LineWidth = 0.003f;
 
     void Awake()
     {
@@ -23,7 +34,7 @@ public class GrabMoveFeedback : MonoBehaviour
         SetUpVisualization();
     }
 
-    void LateUpdate()
+    void Update()
     {
         if (GetComponent<GrabMoveLogic>().isGrabMoving)
         {
@@ -37,43 +48,71 @@ public class GrabMoveFeedback : MonoBehaviour
 
     private void SetUpVisualization()
     {
-        // Set up line renderer
-        GameObject visualization = new GameObject("LineVisualizer");
-        visualization.transform.SetParent(transform);
+        // Set up pivot sphere
+        m_PivotSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        m_PivotSphere.transform.SetParent(m_RightTransform);
+        m_PivotSphere.GetComponent<SphereCollider>().enabled = false;
+        m_PivotSphere.transform.localScale = Vector3.one * m_PivotScale;
         
-        m_LineRenderer = visualization.AddComponent<LineRenderer>();
+        m_SphereRenderer = m_PivotSphere.GetComponent<MeshRenderer>();
+        m_SphereRenderer.sortingOrder = 1;
+        m_SphereRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        m_SphereRenderer.material.color = m_PivotColor;
+        
+        // Set up line renderer
+        m_LineRenderer = m_PivotSphere.AddComponent<LineRenderer>();
+        m_LineRenderer.sortingOrder = 0;
         m_LineRenderer.positionCount = 2;
         m_LineRenderer.material = new Material(Shader.Find("Sprites/Default"));
         m_LineRenderer.startColor = m_LineColor;
         m_LineRenderer.endColor = m_LineColor;
-        m_LineRenderer.startWidth = 0.001f;
-        m_LineRenderer.endWidth = 0.001f;
+        m_LineRenderer.startWidth = m_LineWidth;
+        m_LineRenderer.endWidth = m_LineWidth;
         m_LineRenderer.useWorldSpace = true;
         
-        // Set up text mesh
-        // m_ScaleText = visualization.AddComponent<TextMeshPro>();
-        // m_ScaleText.text = ".";
-        // m_ScaleText.color = m_PivotColor;
-        // m_ScaleText.alignment = TextAlignmentOptions.Center;
+        // Set up text
+        GameObject text = new GameObject("Percentage");
+        text.transform.SetParent(m_SphereRenderer.transform);
+        text.transform.localScale = Vector3.one;
+        
+        m_ScaleText = text.AddComponent<TextMeshPro>();
+        m_ScaleText.renderer.sortingOrder = 2;
+        m_ScaleText.color = Color.white;
+        m_ScaleText.fontSize = 20;
+        m_ScaleText.alignment = TextAlignmentOptions.Center;
     }
 
     private void StartVisualization()
     {
+        float currentScale = GetComponent<GrabMoveLogic>().currentScale;
+        
+        // Update line
         m_LineRenderer.enabled = true;
+        m_LineRenderer.startWidth = m_LineWidth * currentScale;
+        m_LineRenderer.endWidth = m_LineWidth * currentScale;
         m_LineRenderer.SetPosition(0, m_LeftTransform.position);
         m_LineRenderer.SetPosition(1, m_RightTransform.position);
         
-        Vector3 pivot = (m_RightTransform.position - m_LeftTransform.position) / 2;
-        // m_ScaleText.enabled = true;
-        // m_ScaleText.transform.position = pivot;
+        // Update sphere (scale following XROrigin)
+        m_SphereRenderer.enabled = true;
+        Vector3 pivot = (m_RightTransform.position + m_LeftTransform.position) / 2;
+        m_PivotSphere.transform.position = pivot;
+        
+        // Update text
+        m_ScaleText.enabled = true;
+        float percentage = 100f / currentScale;
+        m_ScaleText.transform.position = pivot;
+        m_ScaleText.transform.rotation = Quaternion.LookRotation(pivot - m_RightTransform.position, Vector3.up) * Quaternion.Euler(0, 90, 0);
+        m_ScaleText.text = percentage.ToString("0.") + "%";
     }
 
     private void ClearVisualization()
     {
         m_LineRenderer.enabled = false;
-        // m_ScaleText.enabled = false;
+        m_SphereRenderer.enabled = false;
+        m_ScaleText.enabled = false;
     }
-
+    
     private void StartVibrationFeedback()
     {
         

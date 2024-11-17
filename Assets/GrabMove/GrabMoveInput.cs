@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Handles the user input.
+/// </summary>
 public class GrabMoveInput : MonoBehaviour
 {
     // TODO: Double check input action property setting: one binding / button one binding
@@ -28,12 +31,12 @@ public class GrabMoveInput : MonoBehaviour
 
     private void StartGrabMove(InputAction.CallbackContext context)
     {
-        GetComponent<GrabMoveLogic>().isGrabMoving = true;
+        GetComponent<GrabMoveLogic>().StartGrabMove();
     }
 
     private void StopGrabMove(InputAction.CallbackContext context)
     {
-        GetComponent<GrabMoveLogic>().isGrabMoving = false;
+        GetComponent<GrabMoveLogic>().EndGrabMove();
     }
 
     private void ResetGrabMove(InputAction.CallbackContext context)

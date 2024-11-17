@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
+/// <summary>
+/// Contains the main logic for the Grab Move locomotion technique.
+/// Holds a reference to controllers and calculates the XR Origin's transform.
+/// </summary>
 public class GrabMoveLogic : MonoBehaviour
 {
     [SerializeField] private List<Transform> m_Environment;
@@ -16,19 +19,17 @@ public class GrabMoveLogic : MonoBehaviour
     
     [SerializeField] private bool m_UpdateOffset;
     
-    public Transform leftTransform => m_LeftTransform;
-    public Transform rightTransform => m_RightTransform;
-    
     private Vector3 m_PreviousLeftPosition;
     private Vector3 m_PreviousRightPosition;
     // private Vector3 m_PreviousPivot;
 
     private bool m_IsGrabMoving = false;
-    public bool isGrabMoving
-    {
-        get => m_IsGrabMoving;
-        set => m_IsGrabMoving = value;
-    }
+    private float m_CurrScale = 1f;
+    
+    public Transform leftTransform => m_LeftTransform;
+    public Transform rightTransform => m_RightTransform;
+    public bool isGrabMoving => m_IsGrabMoving;
+    public float currentScale => m_CurrScale;
 
     void Start()
     {
@@ -50,6 +51,16 @@ public class GrabMoveLogic : MonoBehaviour
         m_PreviousLeftPosition = m_LeftTransform.position;
         m_PreviousRightPosition = m_RightTransform.position;
         // m_PreviousPivot = (m_PreviousLeftPosition + m_PreviousRightPosition) / 2;
+    }
+
+    public void StartGrabMove()
+    {
+        m_IsGrabMoving = true;
+    }
+
+    public void EndGrabMove()
+    {
+        m_IsGrabMoving = false;
     }
 
     private void Translation()
@@ -80,9 +91,9 @@ public class GrabMoveLogic : MonoBehaviour
         float currDistance = Vector3.Distance(m_LeftTransform.position, m_RightTransform.position);
         float prevDistance = Vector3.Distance(m_PreviousLeftPosition, m_PreviousRightPosition);
         float prevScale = m_XROrigin.localScale.x;
-        float currScale = prevScale * prevDistance / currDistance;
-        currScale = Mathf.Clamp(currScale, m_MinimumScale, m_MaximumScale);
-        m_XROrigin.localScale = Vector3.one * currScale;
+        m_CurrScale = prevScale * prevDistance / currDistance;
+        m_CurrScale = Mathf.Clamp(m_CurrScale, m_MinimumScale, m_MaximumScale);
+        m_XROrigin.localScale = Vector3.one * m_CurrScale;
         
         // Add offset
         Vector3 currPivot = (m_LeftTransform.position + m_RightTransform.position) / 2;
