@@ -21,7 +21,8 @@ public class GrabMoveLogic : MonoBehaviour
     
     private Vector3 m_PreviousLeftPosition;
     private Vector3 m_PreviousRightPosition;
-    // private Vector3 m_PreviousPivot;
+    private Vector3 m_PreviousLeftForward;
+    private Vector3 m_PreviousRightForward;
 
     private bool m_IsGrabMoving = false;
     private float m_CurrScale = 1f;
@@ -50,7 +51,8 @@ public class GrabMoveLogic : MonoBehaviour
         
         m_PreviousLeftPosition = m_LeftTransform.position;
         m_PreviousRightPosition = m_RightTransform.position;
-        // m_PreviousPivot = (m_PreviousLeftPosition + m_PreviousRightPosition) / 2;
+        m_PreviousLeftForward = m_LeftTransform.forward;
+        m_PreviousRightForward = m_RightTransform.forward;
     }
 
     public void StartGrabMove()
@@ -73,17 +75,24 @@ public class GrabMoveLogic : MonoBehaviour
     private void Rotation()
     {
         // 1st type of rotation
-        // TODO: check axis
         Vector3 currVector = m_RightTransform.position - m_LeftTransform.position;
         Vector3 prevVector = m_PreviousRightPosition - m_PreviousLeftPosition;
-        Quaternion rotation = Quaternion.FromToRotation(currVector, prevVector);
-        Vector3 currPivot = (m_LeftTransform.position + m_RightTransform.position) / 2;
-        m_XROrigin.RotateAround(currPivot, Vector3.up, rotation.eulerAngles.y);
         
-        // TODO: 2nd type of rotation
-        // Vector3 rotationAxis = (m_RightTransform.position - m_LeftTransform.position).normalized;
-        // float angle = Vector3.SignedAngle(m_LeftTransform.forward, m_RightTransform.forward, rotationAxis);
-        // m_XROrigin.RotateAround(m_PreviousPivot, rotationAxis, angle);
+        Vector3 currPivot = (m_LeftTransform.position + m_RightTransform.position) / 2;
+        Vector3 axis = Vector3.Cross(prevVector, currVector).normalized;
+        m_XROrigin.RotateAround(currPivot, - axis, Vector3.Angle(prevVector, currVector));
+        
+        // 2nd type of rotation
+        Vector3 currForward = (m_RightTransform.forward + m_LeftTransform.forward) / 2;
+        Vector3 prevForward = (m_PreviousRightForward + m_PreviousLeftForward) / 2;
+        
+        Vector3 planeNormal = (m_RightTransform.position - m_LeftTransform.position).normalized;
+        Vector3 currProjectedForward = Vector3.ProjectOnPlane(currForward, planeNormal);
+        Vector3 prevProjectedForward = Vector3.ProjectOnPlane(prevForward, planeNormal);
+        
+        float signedAngle = Vector3.SignedAngle(prevProjectedForward, currProjectedForward, planeNormal);
+        
+        m_XROrigin.RotateAround(currPivot, - planeNormal, signedAngle);
     }
 
     private void Scale()

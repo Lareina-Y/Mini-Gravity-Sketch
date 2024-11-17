@@ -1,7 +1,5 @@
 using TMPro;
 using UnityEngine;
-using Quaternion = UnityEngine.Quaternion;
-using Vector3 = UnityEngine.Vector3;
 
 /// <summary>
 /// Generate feedback for the grab move technique
@@ -19,6 +17,8 @@ public class GrabMoveFeedback : MonoBehaviour
     private LineRenderer m_LineRenderer;
     private MeshRenderer m_SphereRenderer;
     private TextMeshPro m_ScaleText;
+
+    private float m_CurrScale = 1.0f;
     
     private float m_PivotScale = 0.006f;
     private float m_LineWidth = 0.003f;
@@ -39,10 +39,12 @@ public class GrabMoveFeedback : MonoBehaviour
         if (GetComponent<GrabMoveLogic>().isGrabMoving)
         {
             StartVisualization();
+            // TriggerVibrationFeedback();
         }
         else
         {
             ClearVisualization();
+            // StopVibrationFeedback();
         }
     }
 
@@ -84,12 +86,12 @@ public class GrabMoveFeedback : MonoBehaviour
 
     private void StartVisualization()
     {
-        float currentScale = GetComponent<GrabMoveLogic>().currentScale;
+        m_CurrScale = GetComponent<GrabMoveLogic>().currentScale;
         
         // Update line
         m_LineRenderer.enabled = true;
-        m_LineRenderer.startWidth = m_LineWidth * currentScale;
-        m_LineRenderer.endWidth = m_LineWidth * currentScale;
+        m_LineRenderer.startWidth = m_LineWidth * m_CurrScale;
+        m_LineRenderer.endWidth = m_LineWidth * m_CurrScale;
         m_LineRenderer.SetPosition(0, m_LeftTransform.position);
         m_LineRenderer.SetPosition(1, m_RightTransform.position);
         
@@ -100,9 +102,9 @@ public class GrabMoveFeedback : MonoBehaviour
         
         // Update text
         m_ScaleText.enabled = true;
-        float percentage = 100f / currentScale;
+        float percentage = 100f / m_CurrScale;
         m_ScaleText.transform.position = pivot;
-        m_ScaleText.transform.rotation = Quaternion.LookRotation(pivot - m_RightTransform.position, Vector3.up) * Quaternion.Euler(0, 90, 0);
+        m_ScaleText.transform.rotation = Camera.main.transform.rotation;
         m_ScaleText.text = percentage.ToString("0.") + "%";
     }
 
@@ -113,7 +115,12 @@ public class GrabMoveFeedback : MonoBehaviour
         m_ScaleText.enabled = false;
     }
     
-    private void StartVibrationFeedback()
+    private void TriggerVibrationFeedback()
+    {
+        
+    }
+
+    private void StopVibrationFeedback()
     {
         
     }
