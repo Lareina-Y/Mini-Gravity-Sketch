@@ -14,21 +14,17 @@ public class SphereSelectLogic : MonoBehaviour
     // set to the right controller grip button.
     [SerializeField] public Transform defaultCenter;
 
-    private float currentRadius;
+    // private float currentRadius;
     private SphereCollider sphereCollider; 
 
-    private void Awake()
+    void Awake()
     {
-        currentRadius = defaultRadius;
-        
-        // Add and configure the SphereCollider
-        sphereCollider = gameObject.GetComponent<SphereCollider>();
+        sphereCollider = interactor.GetComponent<SphereCollider>();
         if (sphereCollider == null)
         {
             sphereCollider = gameObject.AddComponent<SphereCollider>();
         }
         
-        sphereCollider.isTrigger = true;
         sphereCollider.radius = defaultRadius;
     }
     
@@ -42,6 +38,11 @@ public class SphereSelectLogic : MonoBehaviour
         interactor.selectEntered.RemoveListener(OnSelectEntered);
     }
     
+     private void Update()
+     {
+         setCenter();
+     }
+     
     private void OnSelectEntered(SelectEnterEventArgs args)
     {
         MultiSelect();
@@ -57,19 +58,13 @@ public class SphereSelectLogic : MonoBehaviour
             }
         }
     }
-
-    private void Update()
-    {
-        setCenter();
-    }
-    
     private void setCenter()
     {
         Vector3 sphereCenter = interactor.transform.InverseTransformPoint(defaultCenter.position);
 
-        if (currentRadius < defaultRadius)
+        if (sphereCollider.radius < defaultRadius) 
         {
-            sphereCenter.x += currentRadius - defaultRadius;
+             sphereCenter.x += sphereCollider.radius - defaultRadius;
         }
 
         sphereCollider.center = sphereCenter;
@@ -77,15 +72,12 @@ public class SphereSelectLogic : MonoBehaviour
     
     public void AdjustRadius(float radiusChange)
     {
-        // Update the current radius based on the input value
-        currentRadius += radiusChange;
-        currentRadius = Mathf.Clamp(currentRadius, minRadius, maxRadius);
-        sphereCollider.radius = currentRadius;
+        float radius = Mathf.Clamp(sphereCollider.radius + radiusChange, minRadius, maxRadius);
+        sphereCollider.radius = radius; 
     }
-
     public float GetCurrentRadius()
     {
-        return currentRadius;
+         return sphereCollider.radius;
     }
     public SphereCollider GetSphereCollider()
     {

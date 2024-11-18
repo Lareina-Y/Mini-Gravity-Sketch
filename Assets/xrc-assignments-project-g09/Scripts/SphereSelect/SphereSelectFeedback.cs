@@ -45,6 +45,7 @@ public class SphereSelectFeedback : MonoBehaviour
     {
         Vector3 sphereCenter = _sphereSelectLogic.GetSphereCollider().center;
         sphereTransform.localPosition = sphereCenter;
+        sphereTransform.rotation = _sphereSelectLogic.GetSphereCollider().transform.rotation;
         sphereTransform.localScale = Vector3.one * (_sphereSelectLogic.GetCurrentRadius() * 2); // Diameter of sphere
     }
 
@@ -59,7 +60,6 @@ public class SphereSelectFeedback : MonoBehaviour
         sphereTransform.SetParent(_sphereSelectLogic.interactor.transform);
         sphereTransform.localPosition = Vector3.zero;
         sphereTransform.localScale = Vector3.one * _sphereSelectLogic.defaultRadius * 2; // Diameter of default sphere
-
         // Get the renderer and assign the material
         sphereRenderer = sphere.GetComponent<MeshRenderer>();
         if (sphereRenderer != null)
