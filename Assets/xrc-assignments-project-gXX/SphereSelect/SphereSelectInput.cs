@@ -1,16 +1,16 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class SelectObjInput : MonoBehaviour
+public class SphereSelectInput : MonoBehaviour
 {
     [SerializeField] private float inputSensitivity = 1f;
     [SerializeField] private InputActionProperty changeRadius;
 
-    private SelectObjLogic _selectObjLogic;
+    private SphereSelectLogic _sphereSelectLogic;
 
     private void Awake()
     {
-        _selectObjLogic = GetComponent<SelectObjLogic>();
+        _sphereSelectLogic = GetComponent<SphereSelectLogic>();
         changeRadius.action.performed += OnRadiusChange;
     }
 
@@ -30,9 +30,9 @@ public class SelectObjInput : MonoBehaviour
         Vector2 axisValue = context.ReadValue<Vector2>();
         float radiusChange = axisValue.y;
 
-        if (_selectObjLogic != null)
+        if (_sphereSelectLogic != null)
         {
-            _selectObjLogic.AdjustRadius(radiusChange * inputSensitivity * Time.deltaTime);
+            _sphereSelectLogic.AdjustRadius(radiusChange * inputSensitivity * Time.deltaTime);
         }
     }
 }

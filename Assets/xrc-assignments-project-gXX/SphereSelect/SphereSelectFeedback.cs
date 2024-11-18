@@ -1,51 +1,51 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class SelectObjFeedback : MonoBehaviour
+public class SphereSelectFeedback : MonoBehaviour
 {
     [SerializeField] public Material sphereMaterial;
     [SerializeField] public Color defaultColor = Color.grey;
     [SerializeField] public Color hoverColor = Color.red;
 
-    private SelectObjLogic _selectObjLogic;
+    private SphereSelectLogic _sphereSelectLogic;
     private MeshRenderer sphereRenderer;
     private Transform sphereTransform;
     
     private void Awake()
     {
-        _selectObjLogic = GetComponent<SelectObjLogic>();
+        _sphereSelectLogic = GetComponent<SphereSelectLogic>();
         CreateFeedbackSphere();
     }
 
     private void OnEnable()
     {
-        if (_selectObjLogic != null && _selectObjLogic.interactor != null)
+        if (_sphereSelectLogic != null && _sphereSelectLogic.interactor != null)
         {
             // Add listeners to interactor events
-            _selectObjLogic.interactor.hoverEntered.AddListener(OnHoverEntered);
-            _selectObjLogic.interactor.hoverExited.AddListener(OnHoverExited);
-            _selectObjLogic.interactor.selectEntered.AddListener(OnSelectEntered);
-            _selectObjLogic.interactor.selectExited.AddListener(OnSelectExited);
+            _sphereSelectLogic.interactor.hoverEntered.AddListener(OnHoverEntered);
+            _sphereSelectLogic.interactor.hoverExited.AddListener(OnHoverExited);
+            _sphereSelectLogic.interactor.selectEntered.AddListener(OnSelectEntered);
+            _sphereSelectLogic.interactor.selectExited.AddListener(OnSelectExited);
         }
     }
 
     private void OnDisable()
     {
-        if (_selectObjLogic != null && _selectObjLogic.interactor != null)
+        if (_sphereSelectLogic != null && _sphereSelectLogic.interactor != null)
         {
             // Remove listeners from interactor events
-            _selectObjLogic.interactor.hoverEntered.RemoveListener(OnHoverEntered);
-            _selectObjLogic.interactor.hoverExited.RemoveListener(OnHoverExited);
-            _selectObjLogic.interactor.selectEntered.RemoveListener(OnSelectEntered);
-            _selectObjLogic.interactor.selectExited.RemoveListener(OnSelectExited);
+            _sphereSelectLogic.interactor.hoverEntered.RemoveListener(OnHoverEntered);
+            _sphereSelectLogic.interactor.hoverExited.RemoveListener(OnHoverExited);
+            _sphereSelectLogic.interactor.selectEntered.RemoveListener(OnSelectEntered);
+            _sphereSelectLogic.interactor.selectExited.RemoveListener(OnSelectExited);
         }
     }
 
     private void Update()
     {
-        Vector3 sphereCenter = _selectObjLogic.GetSphereCollider().center;
+        Vector3 sphereCenter = _sphereSelectLogic.GetSphereCollider().center;
         sphereTransform.position = sphereCenter;
-        sphereTransform.localScale = Vector3.one * (_selectObjLogic.GetCurrentRadius() * 2); // Diameter of sphere
+        sphereTransform.localScale = Vector3.one * (_sphereSelectLogic.GetCurrentRadius() * 2); // Diameter of sphere
     }
 
     private void CreateFeedbackSphere()
@@ -58,7 +58,7 @@ public class SelectObjFeedback : MonoBehaviour
         // Set the sphere's parent to the current GameObject
         sphereTransform.SetParent(transform);
         sphereTransform.localPosition = Vector3.zero;
-        sphereTransform.localScale = Vector3.one * _selectObjLogic.defaultRadius * 2; // Diameter of default sphere
+        sphereTransform.localScale = Vector3.one * _sphereSelectLogic.defaultRadius * 2; // Diameter of default sphere
 
         // Get the renderer and assign the material
         sphereRenderer = sphere.GetComponent<MeshRenderer>();

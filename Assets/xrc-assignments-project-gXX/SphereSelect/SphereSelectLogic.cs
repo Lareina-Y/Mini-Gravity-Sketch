@@ -3,7 +3,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
-public class SelectObjLogic : MonoBehaviour
+public class SphereSelectLogic : MonoBehaviour
 {
     [SerializeField] public XRBaseInteractor interactor;
     [SerializeField] private float minRadius = 0.01f;

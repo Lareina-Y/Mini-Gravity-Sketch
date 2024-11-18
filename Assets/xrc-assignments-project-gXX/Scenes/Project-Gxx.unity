@@ -279,6 +279,97 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ActionAssets:
   - {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+--- !u!1 &655075277
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 655075281}
+  - component: {fileID: 655075280}
+  - component: {fileID: 655075279}
+  - component: {fileID: 655075278}
+  m_Layer: 0
+  m_Name: SphereSelect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &655075278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 655075277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca23227f6c42e47ba8bca0a612a6d349, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sphereMaterial: {fileID: 2100000, guid: 5f7b564118dc443888a300ebe2b27c2b, type: 2}
+  defaultColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.3647059}
+  hoverColor: {r: 1, g: 0, b: 0, a: 0.5411765}
+--- !u!114 &655075279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 655075277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a8d06686268c4a3e8a8270d02d80fba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputSensitivity: 1
+  changeRadius:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Change Radius
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 739d2c5d-7e99-4868-8e40-9739faa602af
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 415588145297795077, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+--- !u!114 &655075280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 655075277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80c54539450434498a7bced170d7e206, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactor: {fileID: 1070521584}
+  minRadius: 0.01
+  maxRadius: 0.3
+  defaultRadius: 0.04
+  defaultCenter: {fileID: 3043042299396114397}
+--- !u!4 &655075281
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 655075277}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &838283000
 GameObject:
   m_ObjectHideFlags: 0
@@ -3904,3 +3995,4 @@ SceneRoots:
   - {fileID: 437197329}
   - {fileID: 389515927}
   - {fileID: 838283004}
+  - {fileID: 655075281}
