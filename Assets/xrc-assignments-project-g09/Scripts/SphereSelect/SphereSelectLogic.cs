@@ -65,7 +65,7 @@ public class SphereSelectLogic : MonoBehaviour
     
     private void setCenter()
     {
-        Vector3 sphereCenter = defaultCenter.position;
+        Vector3 sphereCenter = interactor.transform.InverseTransformPoint(defaultCenter.position);
 
         if (currentRadius < defaultRadius)
         {
