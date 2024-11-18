@@ -151,56 +151,6 @@ Transform:
   - {fileID: 1545786811}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &389515925
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 389515927}
-  - component: {fileID: 389515926}
-  m_Layer: 0
-  m_Name: ObjCreator
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &389515926
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 389515925}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e7f17b0d7dba9e49b4782b781094a65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectPrefab: {fileID: 2350041347128276377, guid: 956b6e6bbbbe5424a942f51c9ea2d83a, type: 3}
-  leftControllerTransform: {fileID: 9014170783845293767}
-  rightControllerTransform: {fileID: 9014170785329995302}
-  minScale: 0.1
-  maxScale: 5
-  scaleThreshold: 0.02
---- !u!4 &389515927
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 389515925}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.981, y: 1.3327196, z: -1.557}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &437197328
 GameObject:
   m_ObjectHideFlags: 0
@@ -279,118 +229,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ActionAssets:
   - {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f, type: 3}
---- !u!1 &838283000
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 838283004}
-  - component: {fileID: 838283003}
-  - component: {fileID: 838283002}
-  - component: {fileID: 838283001}
-  m_Layer: 0
-  m_Name: GrabMove
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &838283001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 838283000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ab84b13cb526bb418701d883ff3b9d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PivotColor: {r: 0.51572317, g: 0.51572317, b: 0.51572317, a: 1}
-  m_LineColor: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 1}
---- !u!114 &838283002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 838283000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64bb6fb44dea1fd469b013243e77a7ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_GrabMoveAction:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Grab Move
-      m_Type: 0
-      m_ExpectedControlType: 
-      m_Id: 33066e99-1bcf-4adb-9e9d-7bfe358eb412
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: -8872450445490311326, guid: 5f14b3397c3b2034fa751d1435377914, type: 3}
-  m_GrabMoveResetAction:
-    m_UseReference: 0
-    m_Action:
-      m_Name: Grab Move Reset
-      m_Type: 0
-      m_ExpectedControlType: 
-      m_Id: 20fac8b2-1176-4c22-a074-fffd224807c8
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings:
-      - m_Name: 
-        m_Id: ff175c90-c970-4c4d-919f-accd7ffe6d0d
-        m_Path: <XRController>{RightHand}/{PrimaryButton}
-        m_Interactions: 
-        m_Processors: 
-        m_Groups: 
-        m_Action: Grab Move Reset
-        m_Flags: 0
-      m_Flags: 0
-    m_Reference: {fileID: 0}
---- !u!114 &838283003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 838283000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b67cf17e71d13945879fab9cb458514, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Environment:
-  - {fileID: 99921444}
-  m_LeftTransform: {fileID: 9014170783845293767}
-  m_RightTransform: {fileID: 9014170785329995302}
-  m_XROrigin: {fileID: 7696548426158909433}
-  m_MinimumScale: 0.01
-  m_MaximumScale: 10
-  m_UpdateOffset: 0
---- !u!4 &838283004
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 838283000}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1070521582
 GameObject:
   m_ObjectHideFlags: 0
@@ -892,6 +730,118 @@ Transform:
   - {fileID: 2067549583}
   - {fileID: 1200841322}
   - {fileID: 7696548426158909433}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1954588455
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1954588459}
+  - component: {fileID: 1954588458}
+  - component: {fileID: 1954588457}
+  - component: {fileID: 1954588456}
+  m_Layer: 0
+  m_Name: GrabMove
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1954588456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1954588455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ab84b13cb526bb418701d883ff3b9d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PivotColor: {r: 0.51572317, g: 0.51572317, b: 0.51572317, a: 1}
+  m_LineColor: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 1}
+--- !u!114 &1954588457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1954588455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64bb6fb44dea1fd469b013243e77a7ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_GrabMoveAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Grab Move
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 33066e99-1bcf-4adb-9e9d-7bfe358eb412
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -8872450445490311326, guid: 5f14b3397c3b2034fa751d1435377914, type: 3}
+  m_GrabMoveResetAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: Grab Move Reset
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 20fac8b2-1176-4c22-a074-fffd224807c8
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: ff175c90-c970-4c4d-919f-accd7ffe6d0d
+        m_Path: <XRController>{RightHand}/{PrimaryButton}
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Grab Move Reset
+        m_Flags: 0
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+--- !u!114 &1954588458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1954588455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b67cf17e71d13945879fab9cb458514, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Environment:
+  - {fileID: 99921444}
+  m_LeftTransform: {fileID: 9014170783845293767}
+  m_RightTransform: {fileID: 9014170785329995302}
+  m_XROrigin: {fileID: 7696548426158909433}
+  m_MinimumScale: 0.01
+  m_MaximumScale: 10
+  m_UpdateOffset: 0
+--- !u!4 &1954588459
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1954588455}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2067549582
@@ -3284,9 +3234,9 @@ Transform:
   m_GameObject: {fileID: 7696548426158909434}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 9014170785323426436}
   m_Father: {fileID: 1937662121}
@@ -3902,5 +3852,4 @@ SceneRoots:
   - {fileID: 99921444}
   - {fileID: 1937662121}
   - {fileID: 437197329}
-  - {fileID: 389515927}
-  - {fileID: 838283004}
+  - {fileID: 1954588459}
