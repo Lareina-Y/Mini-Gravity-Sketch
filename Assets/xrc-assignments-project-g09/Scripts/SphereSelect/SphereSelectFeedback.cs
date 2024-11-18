@@ -44,7 +44,7 @@ public class SphereSelectFeedback : MonoBehaviour
     private void Update()
     {
         Vector3 sphereCenter = _sphereSelectLogic.GetSphereCollider().center;
-        sphereTransform.position = sphereCenter;
+        sphereTransform.localPosition = sphereCenter;
         sphereTransform.localScale = Vector3.one * (_sphereSelectLogic.GetCurrentRadius() * 2); // Diameter of sphere
     }
 
@@ -56,7 +56,7 @@ public class SphereSelectFeedback : MonoBehaviour
         sphereTransform = sphere.transform;
 
         // Set the sphere's parent to the current GameObject
-        sphereTransform.SetParent(transform);
+        sphereTransform.SetParent(_sphereSelectLogic.interactor.transform);
         sphereTransform.localPosition = Vector3.zero;
         sphereTransform.localScale = Vector3.one * _sphereSelectLogic.defaultRadius * 2; // Diameter of default sphere
 
