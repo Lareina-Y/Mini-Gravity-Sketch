@@ -13,8 +13,7 @@ public class SphereSelectLogic : MonoBehaviour
     // Transform indicating the default position for the sphere center,
     // set to the right controller grip button.
     [SerializeField] public Transform defaultCenter;
-
-    // private float currentRadius;
+    
     private SphereCollider sphereCollider; 
 
     void Awake()
