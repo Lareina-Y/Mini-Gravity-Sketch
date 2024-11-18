@@ -3,14 +3,14 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class SelectObjFeedback : MonoBehaviour
 {
-    public Material sphereMaterial;
-    public Color defaultColor = Color.grey;
-    public Color hoverColor = Color.red;
+    [SerializeField] public Material sphereMaterial;
+    [SerializeField] public Color defaultColor = Color.grey;
+    [SerializeField] public Color hoverColor = Color.red;
 
     private SelectObjLogic _selectObjLogic;
     private MeshRenderer sphereRenderer;
     private Transform sphereTransform;
-
+    
     private void Awake()
     {
         _selectObjLogic = GetComponent<SelectObjLogic>();
@@ -43,18 +43,9 @@ public class SelectObjFeedback : MonoBehaviour
 
     private void Update()
     {
-        Vector3 sphereCenter = _selectObjLogic.defaultCenter.position;
-
-        // Dynamically adjust for smaller radius
-        float currentRadius = _selectObjLogic.getCurrentRadius();
-        float defaultRadius = _selectObjLogic.defaultRadius;
-        if (currentRadius < defaultRadius)
-        {
-            sphereCenter.x += currentRadius - defaultRadius;
-        }
-
+        Vector3 sphereCenter = _selectObjLogic.GetSphereCollider().center;
         sphereTransform.position = sphereCenter;
-        sphereTransform.localScale = Vector3.one * (currentRadius * 2); // Diameter of sphere
+        sphereTransform.localScale = Vector3.one * (_selectObjLogic.GetCurrentRadius() * 2); // Diameter of sphere
     }
 
     private void CreateFeedbackSphere()

@@ -1062,8 +1062,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sphereMaterial: {fileID: 2100000, guid: 5f7b564118dc443888a300ebe2b27c2b, type: 2}
-  defaultColor: {r: 0.59607846, g: 0.59607846, b: 0.59607846, a: 0.2627451}
-  hoverColor: {r: 1, g: 0, b: 0, a: 0.36862746}
+  defaultColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.3647059}
+  hoverColor: {r: 1, g: 0, b: 0, a: 0.5411765}
 --- !u!114 &1949003733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1076,14 +1076,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a8d06686268c4a3e8a8270d02d80fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputSensitivity: 0.01
+  inputSensitivity: 1
   changeRadius:
     m_UseReference: 1
     m_Action:
       m_Name: Change Radius
       m_Type: 0
       m_ExpectedControlType: 
-      m_Id: 23c15b56-505a-4cb7-89a1-d071ec5e0f8d
+      m_Id: 739d2c5d-7e99-4868-8e40-9739faa602af
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []

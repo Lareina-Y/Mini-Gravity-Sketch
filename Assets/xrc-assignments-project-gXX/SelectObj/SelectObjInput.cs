@@ -3,8 +3,8 @@ using UnityEngine.InputSystem;
 
 public class SelectObjInput : MonoBehaviour
 {
-    public float inputSensitivity = 0.01f;
-    public InputActionProperty changeRadius;
+    [SerializeField] private float inputSensitivity = 1f;
+    [SerializeField] private InputActionProperty changeRadius;
 
     private SelectObjLogic _selectObjLogic;
 
@@ -32,7 +32,7 @@ public class SelectObjInput : MonoBehaviour
 
         if (_selectObjLogic != null)
         {
-            _selectObjLogic.AdjustRadius(radiusChange * inputSensitivity);
+            _selectObjLogic.AdjustRadius(radiusChange * inputSensitivity * Time.deltaTime);
         }
     }
 }
