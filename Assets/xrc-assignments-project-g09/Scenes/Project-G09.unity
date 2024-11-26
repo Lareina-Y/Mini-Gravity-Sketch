@@ -466,7 +466,7 @@ MonoBehaviour:
   m_XROrigin: {fileID: 7696548426158909433}
   m_MinimumScale: 0.01
   m_MaximumScale: 10
-  m_UpdateOffset: 0
+  m_UpdateOffset: 1
 --- !u!4 &838283004
 Transform:
   m_ObjectHideFlags: 0

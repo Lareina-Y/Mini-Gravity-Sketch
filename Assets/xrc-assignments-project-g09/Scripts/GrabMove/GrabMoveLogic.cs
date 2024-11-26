@@ -17,7 +17,7 @@ public class GrabMoveLogic : MonoBehaviour
     [SerializeField] private float m_MinimumScale = 0.01f;
     [SerializeField] private float m_MaximumScale = 10f;
     
-    [SerializeField] private bool m_UpdateOffset;
+    [SerializeField] private bool m_UpdateOffset = true;
     
     private Vector3 m_PreviousLeftPosition;
     private Vector3 m_PreviousRightPosition;
@@ -92,7 +92,7 @@ public class GrabMoveLogic : MonoBehaviour
         
         float signedAngle = Vector3.SignedAngle(prevProjectedForward, currProjectedForward, planeNormal);
         
-        m_XROrigin.RotateAround(currPivot, - planeNormal, signedAngle);
+        m_XROrigin.RotateAround(currPivot, planeNormal, - signedAngle);
     }
 
     private void Scale()
@@ -105,8 +105,11 @@ public class GrabMoveLogic : MonoBehaviour
         m_XROrigin.localScale = Vector3.one * m_CurrScale;
         
         // Add offset
-        Vector3 currPivot = (m_LeftTransform.position + m_RightTransform.position) / 2;
-        Vector3 prevPivot = (m_PreviousLeftPosition + m_PreviousRightPosition) / 2;
-        m_XROrigin.position += prevPivot - currPivot;
+        if (m_UpdateOffset)
+        {
+            Vector3 currPivot = (m_LeftTransform.position + m_RightTransform.position) / 2;
+            Vector3 prevPivot = (m_PreviousLeftPosition + m_PreviousRightPosition) / 2;
+            m_XROrigin.position += prevPivot - currPivot;
+        }
     }
 }

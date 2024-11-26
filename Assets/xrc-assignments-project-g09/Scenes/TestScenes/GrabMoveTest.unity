@@ -541,7 +541,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -826,9 +826,9 @@ MonoBehaviour:
   m_LeftTransform: {fileID: 9014170783845293767}
   m_RightTransform: {fileID: 9014170785329995302}
   m_XROrigin: {fileID: 7696548426158909433}
-  m_MinimumScale: 0.01
+  m_MinimumScale: 0.03
   m_MaximumScale: 10
-  m_UpdateOffset: 0
+  m_UpdateOffset: 1
 --- !u!4 &1954588459
 Transform:
   m_ObjectHideFlags: 0
