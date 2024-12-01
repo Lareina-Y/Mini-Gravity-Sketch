@@ -1,6 +1,9 @@
 using UnityEngine;
+using System.Collections.Generic; 
 using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using System.Linq;
 
 public class DeleteObj : MonoBehaviour
 {
@@ -30,7 +33,7 @@ public class DeleteObj : MonoBehaviour
     }
     
     /// <summary>
-    /// This method destroys the object being grabbed by the interactor.
+    /// This method destroys all selected objects being grabbed by the interactor.
     /// </summary>
     /// <param name="obj"></param>
     private void Delete(InputAction.CallbackContext obj)
@@ -39,8 +42,18 @@ public class DeleteObj : MonoBehaviour
         {
             return;
         }
+        
+        // Create a list of interactables cast to XRBaseInteractable
+        List<XRBaseInteractable> interactablesToDelete = m_Interactor.interactablesSelected
+            .OfType<XRBaseInteractable>()
+            .ToList();
 
-        GameObject selectedObject = m_Interactor.firstInteractableSelected.transform.gameObject;
-        Destroy(selectedObject);
+        // Iterate through the copied list and destroy each object
+        foreach (var interactable in interactablesToDelete)
+        {
+            GameObject selectedObject = interactable.transform.gameObject;
+            Destroy(selectedObject);
+        }
+        
     }
 }
