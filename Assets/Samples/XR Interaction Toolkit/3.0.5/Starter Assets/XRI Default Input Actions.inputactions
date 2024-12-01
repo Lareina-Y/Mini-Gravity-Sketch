@@ -3313,34 +3313,6 @@
                     "isPartOfComposite": true
                 }
             ]
-        },
-        {
-            "name": "Sphere Select",
-            "id": "acbecc59-ef5d-4606-b7bb-8865ed80bb7c",
-            "actions": [
-                {
-                    "name": "Change Radius",
-                    "type": "Value",
-                    "id": "3dfb8bb0-140b-4d75-b584-1143ffb5b74f",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "a649c9f6-80c8-4eda-81b0-59290139e3f8",
-                    "path": "<XRController>{RightHand}/thumbstick",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Change Radius",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
         }
     ],
     "controlSchemes": []

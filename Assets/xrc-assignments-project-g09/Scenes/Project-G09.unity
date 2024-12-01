@@ -279,6 +279,64 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ActionAssets:
   - {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+--- !u!1 &595592834
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 595592835}
+  - component: {fileID: 595592836}
+  m_Layer: 0
+  m_Name: DeleteObj
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &595592835
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 595592834}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &595592836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 595592834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d2ee3cdfa3d944109e4582262ae7c43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Interactor: {fileID: 1070521584}
+  m_RightTransform: {fileID: 9014170785329995302}
+  m_Delete:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Delete
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 9cad589e-c336-46b5-b2e7-d4c47f83e7d2
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -8872450445490311326, guid: 779d6ffe600c34e7e88f266424d46bcf, type: 3}
 --- !u!1 &655075277
 GameObject:
   m_ObjectHideFlags: 0
@@ -337,7 +395,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 415588145297795077, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+    m_Reference: {fileID: -8872450445490311326, guid: d06a9374c480e4ad7a60cbdd233c0c4d, type: 3}
 --- !u!114 &655075280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3994,5 +4052,6 @@ SceneRoots:
   - {fileID: 1937662121}
   - {fileID: 437197329}
   - {fileID: 389515927}
+  - {fileID: 595592835}
   - {fileID: 838283004}
   - {fileID: 655075281}
