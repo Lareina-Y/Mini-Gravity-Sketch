@@ -57,7 +57,7 @@ public class RightThumbstickState : MonoBehaviour
             feedbackSphere.transform.SetParent(defaultCenter);
             feedbackSphere.transform.localPosition = new Vector3(0, 0.01f, -0.01f);
             feedbackSphere.transform.localScale = Vector3.one * defaultRadius;
-            feedbackSphere.transform.localRotation = Quaternion.Euler(-30f, 0f, 0f);
+            feedbackSphere.transform.localRotation = defaultCenter.localRotation;
 
             // Set the sphere's material and color
             MeshRenderer sphereRenderer = feedbackSphere.GetComponent<MeshRenderer>();
