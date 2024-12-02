@@ -1,18 +1,31 @@
 using UnityEngine;
 using MeshManipulation.UI;
+using System.Collections.Generic;
+using UnityEngine.XR.Interaction.Toolkit;
 
 namespace MeshManipulation
 {
     public class MeshManipulationLogic : MonoBehaviour
     {
         [SerializeField] private MeshSelectionUI selectionUI;
+        [SerializeField] private MeshEditConfig meshEditConfig;
         
         private MeshSelectionUI.SelectionMode currentMode;
-        private GameObject selectedObject;
         private bool isInSelectionMode = false;
 
-        // Add mode changed event
+        // Store selected objects
+        private List<GameObject> selectedObjects = new List<GameObject>();
+        
+        // Events for object selection state changes
+        public event System.Action<GameObject> OnObjectSelectionChanged;
+        
+        // Event for mode changes
         public event System.Action<MeshSelectionUI.SelectionMode> OnModeChanged;
+
+        // Get currently selected objects (returns array for future expansion)
+        public GameObject[] SelectedObjects => selectedObjects.ToArray();
+
+        public bool HasSelectedObject => selectedObjects.Count > 0;
 
         private void Start()
         {
@@ -35,35 +48,59 @@ namespace MeshManipulation
         {
             if (currentMode == newMode) return;
 
-            ClearCurrentSelection();
-            
             currentMode = newMode;
             isInSelectionMode = true;
             
-            OnModeChanged?.Invoke(currentMode);
-            
-            switch (currentMode)
+            if (selectedObjects.Count > 0)
             {
-                case MeshSelectionUI.SelectionMode.Object:
-                    Debug.Log("Current mode: Object");
-                    break;
-                case MeshSelectionUI.SelectionMode.Vertex:
-                    Debug.Log("Current mode: Vertex");
-                    break;
-                case MeshSelectionUI.SelectionMode.Edge:
-                    Debug.Log("Current mode: Edge");
-                    break;
-                case MeshSelectionUI.SelectionMode.Face:
-                    Debug.Log("Current mode: Face");
-                    break;
+                GameObject selectedObject = selectedObjects[0];
+                
+                // Set interaction layers based on mode
+                if (selectedObject.TryGetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRBaseInteractable>(out var interactable))
+                {
+                    switch (newMode)
+                    {
+                        case MeshSelectionUI.SelectionMode.Object:
+                            interactable.interactionLayers = InteractionLayerMask.GetMask("SphereSelectObject");
+                            // If MeshEditController exists, call ExitEditMode
+                            if (selectedObject.TryGetComponent<MeshEditController>(out var editController))
+                            {
+                                editController.ExitEditMode();
+                            }
+                            break;
+                        default:
+                            interactable.interactionLayers = InteractionLayerMask.GetMask("None");
+                            break;
+                    }
+                }
+
+                // Get or add MeshEditController
+                var meshEditController = selectedObject.GetComponent<MeshEditController>();
+                if (meshEditController == null)
+                {
+                    meshEditController = selectedObject.AddComponent<MeshEditController>();
+                    meshEditController.SetConfig(meshEditConfig);
+                    meshEditController.Initialize();
+                }
+
+                if (currentMode != MeshSelectionUI.SelectionMode.Object)
+                {
+                    meshEditController.ShowForMode(currentMode);
+                }
+                else
+                {
+                    meshEditController.HideAll();
+                }
             }
+            
+            OnModeChanged?.Invoke(currentMode);
         }
 
         private void ClearCurrentSelection()
         {
-            if (selectedObject != null)
+            if (selectedObjects.Count > 0)
             {
-                selectedObject = null;
+                selectedObjects.Clear();
             }
             
             switch (currentMode)
@@ -89,12 +126,33 @@ namespace MeshManipulation
 
         public void SetSelectedObject(GameObject obj)
         {
-            selectedObject = obj;
+            selectedObjects.Clear();
+            if (obj != null)
+            {
+                selectedObjects.Add(obj);
+                OnObjectSelectionChanged?.Invoke(obj);
+            }
         }
 
         public GameObject GetSelectedObject()
         {
-            return selectedObject;
+            return selectedObjects.Count > 0 ? selectedObjects[0] : null;
+        }
+
+        // Method to clear selected objects
+        public void ClearSelection()
+        {
+            if (selectedObjects.Count > 0)
+            {
+                selectedObjects.Clear();
+                OnObjectSelectionChanged?.Invoke(null);
+            }
+        }
+
+        // Method to check if an object is selected
+        public bool IsObjectSelected(GameObject obj)
+        {
+            return selectedObjects.Contains(obj);
         }
     }
 }

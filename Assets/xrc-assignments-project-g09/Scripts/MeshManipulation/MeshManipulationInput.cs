@@ -17,9 +17,12 @@ namespace MeshManipulation
         private bool isButtonPressed = false;
         private float pressStartTime;
         private bool hasTriggeredHold = false;
+        private MeshManipulationLogic meshManipulationLogic;
 
         private void Start()
         {
+            meshManipulationLogic = GetComponent<MeshManipulationLogic>();
+            
             if (m_showMenuAction != null)
             {
                 m_showMenuAction.action.started += OnShowMenuInput;
@@ -31,7 +34,7 @@ namespace MeshManipulation
         {
             if (isButtonPressed && !hasTriggeredHold)
             {
-                if (Time.time - pressStartTime >= holdThreshold)
+                if (Time.time - pressStartTime >= holdThreshold && meshManipulationLogic.HasSelectedObject)
                 {
                     hasTriggeredHold = true;
                     Vector3 cameraPosition = Camera.main.transform.position;

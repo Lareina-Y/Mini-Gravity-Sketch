@@ -52,24 +52,53 @@ public class SphereSelectLogic : MonoBehaviour
         {
             interactor = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactors.XRDirectInteractor>();
         }
-        
-        sphereCollider = interactor.GetComponent<SphereCollider>();
 
         if (defaultCenter == null)
         {
             Debug.LogError("Default center transform is not assigned.");
         }
-        
-        currentRadius = defaultRadius;
-        sphereCollider.radius = currentRadius;
-        sphereCollider.isTrigger = true;
-
-        Vector3 offset = defaultCenter.position - interactor.transform.position;
-        sphereColliderOffset = interactor.transform.InverseTransformDirection(offset);
     }
     
     void Start()
     {
+
+        sphereCollider = interactor.GetComponent<SphereCollider>();
+        sphereCollider.isTrigger = true;
+
+
+        Vector3 offset = defaultCenter.position - interactor.transform.position;
+        sphereColliderOffset = interactor.transform.InverseTransformDirection(offset);
+
+        // Add corresponding interaction layers based on the current mode
+        if (interactor is XRDirectInteractor directInteractor)
+        {
+            var currentLayers = directInteractor.interactionLayers.value;
+            switch (meshManipulationLogic.GetCurrentMode())
+            {
+                case MeshSelectionUI.SelectionMode.Object:
+                    currentLayers |= InteractionLayerMask.GetMask("SphereSelectObject");
+                    break;
+                case MeshSelectionUI.SelectionMode.Vertex:
+                    currentLayers |= InteractionLayerMask.GetMask("SphereSelectVertex");
+                    break;
+                case MeshSelectionUI.SelectionMode.Edge:
+                    currentLayers |= InteractionLayerMask.GetMask("SphereSelectEdge");
+                    break;
+                case MeshSelectionUI.SelectionMode.Face:
+                    currentLayers |= InteractionLayerMask.GetMask("SphereSelectFace");
+                    break;
+            }
+            directInteractor.interactionLayers = currentLayers;
+        }
+
+        currentRadius = defaultRadius;
+        sphereCollider.radius = currentRadius;
+        UpdateSpherePosition();
+
+        if (meshManipulationLogic == null)
+        {
+            meshManipulationLogic = FindObjectOfType<MeshManipulationLogic>();
+        }
         
         if (meshManipulationLogic != null)
         {
@@ -81,7 +110,7 @@ public class SphereSelectLogic : MonoBehaviour
         interactor.selectEntered.AddListener(OnSelectEntered);
         interactor.selectExited.AddListener(OnSelectExited);
 
-        UpdateSpherePosition();
+
     }
 
     void OnDestroy()
@@ -103,10 +132,46 @@ public class SphereSelectLogic : MonoBehaviour
     private void HandleModeChange(MeshSelectionUI.SelectionMode newMode)
     {
         currentMode = newMode;
+        
+        if (interactor is XRDirectInteractor directInteractor)
+        {
+            // Get current interaction layers
+            var currentLayers = directInteractor.interactionLayers.value;
+            
+            // Remove all SphereSelect related layers
+            currentLayers &= ~InteractionLayerMask.GetMask(
+                "SphereSelectObject",
+                "SphereSelectVertex",
+                "SphereSelectEdge",
+                "SphereSelectFace"
+            );
+            
+            // Add corresponding layers based on the new mode
+            switch (newMode)
+            {
+                case MeshSelectionUI.SelectionMode.Object:
+                    currentLayers |= InteractionLayerMask.GetMask("SphereSelectObject");
+                    break;
+                case MeshSelectionUI.SelectionMode.Vertex:
+                    currentLayers |= InteractionLayerMask.GetMask("SphereSelectVertex");
+                    break;
+                case MeshSelectionUI.SelectionMode.Edge:
+                    currentLayers |= InteractionLayerMask.GetMask("SphereSelectEdge");
+                    break;
+                case MeshSelectionUI.SelectionMode.Face:
+                    currentLayers |= InteractionLayerMask.GetMask("SphereSelectFace");
+                    break;
+            }
+            
+            // Update interaction layers
+            directInteractor.interactionLayers = currentLayers;
+        }
     }
 
-    private void Update()
+    public void AdjustRadius(float change)
     {
+        currentRadius = Mathf.Clamp(currentRadius + change, minRadius, maxRadius);
+        sphereCollider.radius = currentRadius;
         UpdateSpherePosition();
     }
 
@@ -146,6 +211,7 @@ public class SphereSelectLogic : MonoBehaviour
         // Get collider position in world space
         Vector3 colliderWorldPosition = interactor.transform.TransformPoint(sphereCollider.center);
 
+        var currentMode = meshManipulationLogic.GetCurrentMode();
         switch (currentMode)
         {
             case MeshSelectionUI.SelectionMode.Object:
@@ -165,7 +231,9 @@ public class SphereSelectLogic : MonoBehaviour
 
     private void SelectObjects(Vector3 position)
     {
+        // Use Physics.OverlapSphere directly to detect objects in range
         Collider[] colliders = Physics.OverlapSphere(position, sphereCollider.radius);
+        
         List<MeshRenderer> selectedRenderers = new List<MeshRenderer>();
 
         foreach (Collider collider in colliders)
@@ -176,6 +244,11 @@ public class SphereSelectLogic : MonoBehaviour
                 if (selectInteractable.transform.TryGetComponent(out MeshRenderer meshRenderer))
                 {
                     selectedRenderers.Add(meshRenderer);
+                    
+                    if (meshManipulationLogic != null)
+                    {
+                        meshManipulationLogic.SetSelectedObject(selectInteractable.transform.gameObject);
+                    }
                 }
                 
                 interactor.interactionManager.SelectEnter(interactor, selectInteractable);
@@ -189,7 +262,6 @@ public class SphereSelectLogic : MonoBehaviour
     private void SelectVertices(Vector3 position)
     {
         // TODO: Implement vertex selection logic using sphere overlap
-        // This will be implemented in the next step
     }
 
     private void SelectEdges(Vector3 position)
@@ -207,13 +279,6 @@ public class SphereSelectLogic : MonoBehaviour
     private void OnSelectExited(SelectExitEventArgs args)
     {
         OnSelectExitedEvent?.Invoke(args);
-    }
-
-    public void AdjustRadius(float change)
-    {
-        currentRadius = Mathf.Clamp(currentRadius + change, minRadius, maxRadius);
-        sphereCollider.radius = currentRadius;
-        UpdateSpherePosition();
     }
 
     public SphereCollider GetSphereCollider()
