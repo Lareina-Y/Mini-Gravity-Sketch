@@ -10,14 +10,18 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 public class ChangeColorLogic : MonoBehaviour
 {
     [SerializeField] private XRBaseInteractor m_Interactor;
+    [SerializeField] private GameObject m_PointerPrefab;
     
     private ColorPanel m_ColorPanel;
     private Color m_Color;
-    private GameObject m_TargetObject;
+    private GameObject m_Pointer;
+    private GameObject m_TargetObject; // TODO: material issue
 
     private bool m_IsChanging;
     
     public XRBaseInteractor interactor => m_Interactor;
+    
+    // TODO: All future objects should be in this color
     public Color color => m_Color;
 
     void Awake()
@@ -33,6 +37,14 @@ public class ChangeColorLogic : MonoBehaviour
     void OnDisable()
     {
         m_Interactor.selectEntered.RemoveListener(OnSelectEntered);
+    }
+
+    void Start()
+    {
+        // Spawn a pointer object
+        m_Pointer = Instantiate(m_PointerPrefab, m_Interactor.transform);
+        m_Pointer.transform.localPosition = new Vector3(0, 0, -0.006f);
+        m_Pointer.SetActive(false);
     }
 
     void Update()
@@ -56,12 +68,14 @@ public class ChangeColorLogic : MonoBehaviour
     public void ChangeColor()
     {
         m_ColorPanel.SetActive(true);
+        m_Pointer.SetActive(true);
         m_IsChanging = true;
     }
 
     public void EndChangeColor()
     {
         m_ColorPanel.SetActive(false);
+        m_Pointer.SetActive(false);
         m_IsChanging = false;
     }
 }

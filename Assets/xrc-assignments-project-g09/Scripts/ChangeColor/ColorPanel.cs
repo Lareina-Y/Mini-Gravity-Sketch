@@ -7,9 +7,9 @@ public class ColorPanel : MonoBehaviour
     [SerializeField] private GameObject m_ColorPanel;
     [SerializeField] private RawImage m_ColorWheel;
     
-    [SerializeField] private float m_Hue = 0f;
-    [SerializeField] private float m_Saturation = 0f;
-    [SerializeField] private float m_Value = 1f;
+    private float m_Hue = 0f;
+    private float m_Saturation = 0f;
+    private float m_Value = 1f;
 
     private bool isChanging = false;
     private Color m_Color;
