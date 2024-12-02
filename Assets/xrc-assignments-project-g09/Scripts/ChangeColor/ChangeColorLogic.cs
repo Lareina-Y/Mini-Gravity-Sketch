@@ -11,10 +11,12 @@ public class ChangeColorLogic : MonoBehaviour
 {
     [SerializeField] private XRBaseInteractor m_Interactor;
     [SerializeField] private GameObject m_PointerPrefab;
+    [SerializeField] private GameObject m_Icon;
     
     private ColorPanel m_ColorPanel;
     private Color m_Color;
     private GameObject m_Pointer;
+    private Pose attachPose;
     private GameObject m_TargetObject; // TODO: material issue
 
     private bool m_IsChanging;
@@ -49,7 +51,7 @@ public class ChangeColorLogic : MonoBehaviour
 
     void Update()
     {
-        if (m_IsChanging)
+        if (m_IsChanging && m_TargetObject != null)
         {
             m_Color = m_ColorPanel.color;
             m_TargetObject.GetComponent<Renderer>().material.color = m_Color;
@@ -61,12 +63,16 @@ public class ChangeColorLogic : MonoBehaviour
         if (eventArgs.interactableObject is IXRSelectInteractable selectInteractable)
         {
             m_TargetObject = selectInteractable.transform.gameObject;
-            
+            attachPose = selectInteractable.GetAttachPoseOnSelect(m_Interactor);
         }
     }
 
     public void ChangeColor()
     {
+        // Release the object and move to poseOnSelect?
+        m_Interactor.interactionManager.SelectExit(m_Interactor, m_Interactor.firstInteractableSelected);
+        m_TargetObject.transform.SetPositionAndRotation(attachPose.position, attachPose.rotation);
+        
         m_ColorPanel.SetActive(true);
         m_Pointer.SetActive(true);
         m_IsChanging = true;
