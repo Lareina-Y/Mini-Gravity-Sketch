@@ -49,7 +49,6 @@ GameObject:
   - component: {fileID: 70221617294385387}
   - component: {fileID: 5758479407214592224}
   - component: {fileID: 7675136636912708559}
-  - component: {fileID: 5784617525709488234}
   m_Layer: 0
   m_Name: ScaleObject
   m_TagString: Untagged
@@ -308,18 +307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21672e942d6c2d045a0156f515ee2a20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5784617525709488234
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5143989601873648173}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21672e942d6c2d045a0156f515ee2a20, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  rightGripAction: {fileID: 0}
 --- !u!1001 &1246832025820033120
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -331,6 +319,10 @@ PrefabInstance:
     - target: {fileID: 1268525508352955248, guid: 97ff98409365e1d4c9bf423761e0c9a8, type: 3}
       propertyPath: m_Name
       value: Z-Axis
+      objectReference: {fileID: 0}
+    - target: {fileID: 2041212966116015959, guid: 97ff98409365e1d4c9bf423761e0c9a8, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7114028038847476606, guid: 97ff98409365e1d4c9bf423761e0c9a8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -443,6 +435,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7160154673069931599, guid: 0ed016f3439fbfb4fba5a109365b9dc6, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7521619217713284138, guid: 0ed016f3439fbfb4fba5a109365b9dc6, type: 3}
       propertyPath: m_Name
       value: X-Axis
@@ -466,9 +462,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4865234885689420617}
     m_Modifications:
+    - target: {fileID: 203375330602365705, guid: 553e9c3b2e071f64b8e6971ebabbef45, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6208514680581521208, guid: 553e9c3b2e071f64b8e6971ebabbef45, type: 3}
       propertyPath: m_Name
-      value: 'Y-Axis '
+      value: Y-Axis
       objectReference: {fileID: 0}
     - target: {fileID: 7872751826461190896, guid: 553e9c3b2e071f64b8e6971ebabbef45, type: 3}
       propertyPath: m_LocalPosition.x

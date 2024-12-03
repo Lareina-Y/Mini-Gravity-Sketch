@@ -1,10 +1,18 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+
 
 public class ScaleModeManager : MonoBehaviour
 {
     private bool isScaleMode = false;
-    private bool isGripPressed = false;  
+    private bool isGripPressed = false;
+    private XRGrabInteractable currentGrabbedObject;
+    private Vector3 originalPosition;
+    private XRGrabInteractable scalingObject;
+    private Quaternion originalRotation;
 
     [Header("Input Actions")]
     [SerializeField]
@@ -12,39 +20,57 @@ public class ScaleModeManager : MonoBehaviour
     [SerializeField]
     private InputActionReference rightGripAction;
 
+    [Header("References")]
+    public XRDirectInteractor interactor;
+
     void Start()
     {
         Debug.Log("ScaleModeManager Starting...");
+        SetupInputActions();
+        SetupInteractor();
+    }
 
+    private void SetupInputActions()
+    {
         if (leftYButtonAction != null && rightGripAction != null)
         {
             leftYButtonAction.action.Enable();
             rightGripAction.action.Enable();
-
-       
             leftYButtonAction.action.performed += OnScaleToggle;
-            rightGripAction.action.performed += OnGripPressed;    
-            rightGripAction.action.canceled += OnGripReleased;  
-
-            Debug.Log("Input actions setup complete");
+            rightGripAction.action.performed += OnGripPressed;
+            rightGripAction.action.canceled += OnGripReleased;
         }
-        else
+    }
+
+    private void SetupInteractor()
+    {
+        if (interactor != null)
         {
-            Debug.LogError("Input actions not fully assigned!");
+            interactor.selectEntered.AddListener(OnSelectEntered);
+            interactor.selectExited.AddListener(OnSelectExited);
         }
-        Debug.Log("ScaleModeManager initialization complete");
     }
 
-    private void OnGripPressed(InputAction.CallbackContext context)
+    private void OnSelectEntered(SelectEnterEventArgs args)
     {
-        isGripPressed = true;
-        Debug.Log("Grip Pressed!");
+        if (isScaleMode){
+          return;
+        }
+        
+        currentGrabbedObject = args.interactableObject.transform.GetComponent<XRGrabInteractable>();
+        if (currentGrabbedObject != null)
+        {
+            originalPosition = currentGrabbedObject.transform.position;
+            originalRotation = currentGrabbedObject.transform.rotation;
+        }
     }
 
-    private void OnGripReleased(InputAction.CallbackContext context)
+    private void OnSelectExited(SelectExitEventArgs args)
     {
-        isGripPressed = false;
-        Debug.Log("Grip Released!");
+        if (isScaleMode){
+          return;
+        }
+        currentGrabbedObject = null;
     }
 
     private void OnScaleToggle(InputAction.CallbackContext context)
@@ -54,26 +80,62 @@ public class ScaleModeManager : MonoBehaviour
 
         if (!isScaleMode)
         {
-            if (isGripPressed)  
+            if (isGripPressed && currentGrabbedObject != null)
             {
                 isScaleMode = true;
                 AxisScaleController.IsInScaleMode = true;
-                Debug.Log("Entered Scale Mode, Grab Mode ended");
+
+                scalingObject = currentGrabbedObject;
+
+                scalingObject.trackPosition = false;
+                scalingObject.trackRotation = false;
+                scalingObject.transform.position = originalPosition;
+                scalingObject.transform.rotation = originalRotation;
+                Debug.Log($"Entered Scale Mode, object returned to original position: {originalPosition}");
             }
             else
             {
-                Debug.Log("Cannot enter Scale Mode - Grip not pressed");
+                Debug.Log("Cannot enter Scale Mode - No object grabbed or grip not pressed");
             }
         }
         else
         {
             isScaleMode = false;
             AxisScaleController.IsInScaleMode = false;
-            Debug.Log("Exited Scale Mode");
+
+
+            if (scalingObject != null)
+            {
+                Debug.Log("Reset the object position");
+                scalingObject.trackPosition = true;
+                scalingObject.trackRotation = true;
+                scalingObject = null;
+            }
+            else {
+                Debug.Log("currentGrabbedObject is empty!");
+            }
+            Debug.Log("Exited Scale Mode, grab enabled");
         }
     }
 
+    private void OnGripPressed(InputAction.CallbackContext context)
+    {
+        isGripPressed = true;
+        
+    }
+
+    private void OnGripReleased(InputAction.CallbackContext context)
+    {
+        isGripPressed = false;
+    }
+
     void OnDestroy()
+    {
+        CleanupInputActions();
+        CleanupInteractor();
+    }
+
+    private void CleanupInputActions()
     {
         if (leftYButtonAction != null)
         {
@@ -85,6 +147,15 @@ public class ScaleModeManager : MonoBehaviour
             rightGripAction.action.performed -= OnGripPressed;
             rightGripAction.action.canceled -= OnGripReleased;
             rightGripAction.action.Disable();
+        }
+    }
+
+    private void CleanupInteractor()
+    {
+        if (interactor != null)
+        {
+            interactor.selectEntered.RemoveListener(OnSelectEntered);
+            interactor.selectExited.RemoveListener(OnSelectExited);
         }
     }
 }
