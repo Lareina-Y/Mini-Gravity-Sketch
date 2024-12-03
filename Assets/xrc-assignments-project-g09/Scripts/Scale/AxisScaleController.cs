@@ -7,10 +7,18 @@ public class AxisScaleController : MonoBehaviour
     private Transform xAxis;
     private Transform yAxis;
     private Transform zAxis;
+    private Transform axisParent;  
+    private static AxisScaleController Instance;  
 
     [Header("Input Actions")]
     [SerializeField]
     private InputActionReference rightGripAction;
+
+    // Current Scaling State
+    private Transform currentSelectedAxis;
+    private Vector3 initialControllerPosition;
+    private Vector3 initialScale;
+    private bool isScaling = false;
 
     // Scale Mode State
     private static bool isInScaleMode = false;
@@ -21,14 +29,18 @@ public class AxisScaleController : MonoBehaviour
         {
             isInScaleMode = value;
             Debug.Log($"Scale Mode changed to: {value}");
+
+            if (Instance != null)
+            {
+                Instance.UpdateAxisVisibility(value);
+            }
         }
     }
 
-    // Current Scaling State
-    private Transform currentSelectedAxis;
-    private Vector3 initialControllerPosition;
-    private Vector3 initialScale;
-    private bool isScaling = false;
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -70,7 +82,7 @@ public class AxisScaleController : MonoBehaviour
     private void InitializeAxes()
     {
         Debug.Log("Initializing axes...");
-        Transform axisParent = transform.Find("Axis");
+        axisParent = transform.Find("Axis");
         if (axisParent == null)
         {
             Debug.LogError("Axis parent not found under this object!");
@@ -87,9 +99,21 @@ public class AxisScaleController : MonoBehaviour
             return;
         }
 
+        // 初始化时隐藏轴
+        UpdateAxisVisibility(false);
+
         SetupAxisCollider(xAxis);
         SetupAxisCollider(yAxis);
         SetupAxisCollider(zAxis);
+    }
+
+    private void UpdateAxisVisibility(bool visible)
+    {
+        if (axisParent != null)
+        {
+            axisParent.gameObject.SetActive(visible);
+            Debug.Log($"Axis visibility set to: {visible}");
+        }
     }
 
     private void SetupAxisCollider(Transform axis)
@@ -104,7 +128,6 @@ public class AxisScaleController : MonoBehaviour
         if (collisionHandler == null)
         {
             collisionHandler = axis.gameObject.AddComponent<AxisCollisionHandler>();
-            collisionHandler.Initialize(this, axis.name);
         }
     }
 
@@ -171,60 +194,53 @@ public class AxisScaleController : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (!isScaling)
-        {
-            return;
-        }
-
-        if (rightGripAction == null || !rightGripAction.action.IsPressed())
-        {
-            StopScaling();
-            return;
-        }
-
-        // Scaling logic
-        Vector3 currentControllerPosition = currentSelectedAxis.position;
-        Debug.Log($"Current controller position: {currentControllerPosition}");
-
-        float delta = 0;
-        if (currentSelectedAxis == xAxis)
-        {
-            delta = currentControllerPosition.x - initialControllerPosition.x;
-        }
-        else if (currentSelectedAxis == yAxis)
-        {
-            delta = currentControllerPosition.y - initialControllerPosition.y;
-        }
-        else if (currentSelectedAxis == zAxis)
-        {
-            delta = currentControllerPosition.z - initialControllerPosition.z;
-        }
-        Debug.Log($"Delta calculated for {currentSelectedAxis.name}: {delta}");
-
-        Vector3 newScale = initialScale;
-        if (currentSelectedAxis == xAxis)
-        {
-            newScale.x = Mathf.Clamp(initialScale.x + delta, 0.1f, 5.0f);
-        }
-        else if (currentSelectedAxis == yAxis)
-        {
-            newScale.y = Mathf.Clamp(initialScale.y + delta, 0.1f, 5.0f);
-        }
-        else if (currentSelectedAxis == zAxis)
-        {
-            newScale.z = Mathf.Clamp(initialScale.z + delta, 0.1f, 5.0f);
-        }
-
-        transform.localScale = newScale;
-        Debug.Log($"Scaling applied. New Scale: {newScale}");
-    }
-
     private void StopScaling()
     {
         isScaling = false;
         currentSelectedAxis = null;
         Debug.Log("Stopped scaling.");
     }
+
+    private void Update()
+    {
+        if (isScaling && currentSelectedAxis != null)
+        {
+            UpdateScaling();
+        }
+    }
+
+    private void UpdateScaling()
+{
+    Vector3 controllerPosition = currentSelectedAxis.position; 
+    Vector3 objectCenter = transform.position;
+
+    Vector3 directionToController = controllerPosition - objectCenter;
+
+    Vector3 projectionAxis = Vector3.right; 
+    if (currentSelectedAxis == yAxis)
+        projectionAxis = Vector3.up;
+    else if (currentSelectedAxis == zAxis)
+        projectionAxis = Vector3.forward;
+
+    // 4. 计算投影长度
+    float projectedDistance = Vector3.Dot(directionToController, projectionAxis);
+    
+    // 5. 计算新的缩放值（减去初始距离得到delta）
+    float initialDistance = Vector3.Dot(initialControllerPosition - objectCenter, projectionAxis);
+    float scaleDelta = projectedDistance - initialDistance;
+
+    // 6. 应用新的缩放值
+    Vector3 newScale = initialScale;
+    if (currentSelectedAxis == xAxis)
+        newScale.x = Mathf.Max(0.1f, initialScale.x + scaleDelta);
+    else if (currentSelectedAxis == yAxis)
+        newScale.y = Mathf.Max(0.1f, initialScale.y + scaleDelta);
+    else if (currentSelectedAxis == zAxis)
+        newScale.z = Mathf.Max(0.1f, initialScale.z + scaleDelta);
+
+    // 7. 更新物体缩放
+    transform.localScale = newScale;
+
+    Debug.Log($"Scaling - Distance: {projectedDistance:F2}, Delta: {scaleDelta:F2}, New Scale: {newScale}");
+}
 }
