@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 203375330602365705}
   - component: {fileID: 7807995803472502504}
   - component: {fileID: 556855180796009171}
-  - component: {fileID: 1896930530118423224}
+  - component: {fileID: 2838218512799437739}
   m_Layer: 0
-  m_Name: 'Y-Axis '
+  m_Name: Y-Axis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -253,7 +253,7 @@ MonoBehaviour:
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
   m_FarAttachMode: 0
---- !u!114 &1896930530118423224
+--- !u!114 &2838218512799437739
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -262,12 +262,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6208514680581521208}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99c7a0dd49508fb4d939ffa96c4f87f4, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b5f0f9cc68150b46abde725266ddcce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  line: {fileID: 0}
-  cone: {fileID: 0}
-  axisDirection: {x: 1, y: 0, z: 0}
+  rightGripAction: {fileID: 5667446173830999989, guid: 0be0028c24f2a4c14a96b6aa39055933, type: 3}
 --- !u!1001 &6840752356309031017
 PrefabInstance:
   m_ObjectHideFlags: 0

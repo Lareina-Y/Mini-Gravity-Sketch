@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2041212966116015959}
   - component: {fileID: 7073420013746318444}
   - component: {fileID: 2373028234474134870}
-  - component: {fileID: 1295036749023700176}
+  - component: {fileID: 7376201942989555367}
   m_Layer: 0
   m_Name: Z-Axis
   m_TagString: Untagged
@@ -98,7 +98,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -253,7 +253,7 @@ MonoBehaviour:
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
   m_FarAttachMode: 0
---- !u!114 &1295036749023700176
+--- !u!114 &7376201942989555367
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -262,12 +262,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1268525508352955248}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99c7a0dd49508fb4d939ffa96c4f87f4, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b5f0f9cc68150b46abde725266ddcce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  line: {fileID: 0}
-  cone: {fileID: 0}
-  axisDirection: {x: 1, y: 0, z: 0}
+  rightGripAction: {fileID: 5667446173830999989, guid: 0be0028c24f2a4c14a96b6aa39055933, type: 3}
 --- !u!1001 &1259646472860154233
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.InputSystem;
 
 public class AxisScaleController : MonoBehaviour
@@ -7,8 +6,7 @@ public class AxisScaleController : MonoBehaviour
     private Transform xAxis;
     private Transform yAxis;
     private Transform zAxis;
-    private Transform axisParent;  
-    private static AxisScaleController Instance;  
+    private Transform targetObject; 
 
     [Header("Input Actions")]
     [SerializeField]
@@ -20,51 +18,46 @@ public class AxisScaleController : MonoBehaviour
     private Vector3 initialScale;
     private bool isScaling = false;
 
+    private Vector3 initialScaleX;
+    private Vector3 initialScaleY;
+    private Vector3 initialScaleZ;
+
+    [Header("References")]
+    public UnityEngine.XR.Interaction.Toolkit.Interactors.XRDirectInteractor interactor;
+
     // Scale Mode State
-    private static bool isInScaleMode = false;
-    public static bool IsInScaleMode
+    private bool isInScaleMode = false;
+    public bool IsInScaleMode
     {
         get { return isInScaleMode; }
         set
         {
             isInScaleMode = value;
-            Debug.Log($"Scale Mode changed to: {value}");
-
-            if (Instance != null)
-            {
-                Instance.UpdateAxisVisibility(value);
-            }
+            Debug.Log($"[{gameObject.name}] Scale Mode changed to: {value}");
+            UpdateAxisVisibility(value);
         }
     }
 
-    private void Awake()
+    public void SetAxes(Transform xAxisTransform, Transform yAxisTransform, Transform zAxisTransform)
     {
-        Instance = this;
+        xAxis = xAxisTransform;
+        yAxis = yAxisTransform;
+        zAxis = zAxisTransform;
+
+        if (xAxis == null || yAxis == null || zAxis == null)
+        {
+            Debug.LogError("One or more axes are missing. Ensure all axis references are assigned.");
+        }
+        else
+        {
+            Debug.Log("Axes successfully assigned.");
+        }
+
     }
 
     private void Start()
     {
-        Debug.Log("AxisScaleController Starting...");
         InitializeInputActions();
-        InitializeAxes();
-    }
-
-    private void OnEnable()
-    {
-        if (rightGripAction != null)
-        {
-            rightGripAction.action.Enable();
-            Debug.Log("Right grip action enabled in OnEnable.");
-        }
-    }
-
-    private void OnDisable()
-    {
-        if (rightGripAction != null)
-        {
-            rightGripAction.action.Disable();
-            Debug.Log("Right grip action disabled in OnDisable.");
-        }
     }
 
     private void InitializeInputActions()
@@ -79,168 +72,243 @@ public class AxisScaleController : MonoBehaviour
         Debug.Log("Grip action enabled in InitializeInputActions.");
     }
 
-    private void InitializeAxes()
+    public void UpdateAxisVisibility(bool visible)
     {
-        Debug.Log("Initializing axes...");
-        axisParent = transform.Find("Axis");
-        if (axisParent == null)
-        {
-            Debug.LogError("Axis parent not found under this object!");
-            return;
-        }
+        if (xAxis != null) xAxis.gameObject.SetActive(visible);
+        if (yAxis != null) yAxis.gameObject.SetActive(visible);
+        if (zAxis != null) zAxis.gameObject.SetActive(visible);
 
-        xAxis = axisParent.Find("X-Axis");
-        yAxis = axisParent.Find("Y-Axis");
-        zAxis = axisParent.Find("Z-Axis");
-
-        if (xAxis == null || yAxis == null || zAxis == null)
-        {
-            Debug.LogError("One or more axes (X, Y, Z) are missing under the Axis parent.");
-            return;
-        }
-
-        // 初始化时隐藏轴
-        UpdateAxisVisibility(false);
-
-        SetupAxisCollider(xAxis);
-        SetupAxisCollider(yAxis);
-        SetupAxisCollider(zAxis);
-    }
-
-    private void UpdateAxisVisibility(bool visible)
-    {
-        if (axisParent != null)
-        {
-            axisParent.gameObject.SetActive(visible);
-            Debug.Log($"Axis visibility set to: {visible}");
-        }
-    }
-
-    private void SetupAxisCollider(Transform axis)
-    {
-        if (axis == null)
-        {
-            Debug.LogError("SetupAxisCollider called with null axis.");
-            return;
-        }
-
-        AxisCollisionHandler collisionHandler = axis.gameObject.GetComponent<AxisCollisionHandler>();
-        if (collisionHandler == null)
-        {
-            collisionHandler = axis.gameObject.AddComponent<AxisCollisionHandler>();
-        }
+        Debug.Log($"Axis visibility set to: {visible}");
     }
 
     public void HandleAxisCollision(string axisName, Collider other, bool isEntering)
+{
+    if (!isInScaleMode)
     {
-        Debug.Log($"HandleAxisCollision: HandleAxisCollision called for {axisName} with isEntering = {isEntering}");
-
-        if (!isInScaleMode)
-        {
-            Debug.Log("HandleAxisCollision: Not in scale mode, ignoring collision.");
-            return;
-        }
-
-        if (!other.gameObject.name.Contains("Direct Interactor"))
-        {
-            Debug.Log($"HandleAxisCollision: Collider is not an interactor: {other.gameObject.name}");
-            return;
-        }
-
-        if (isEntering)
-        {
-            Debug.Log($"HandleAxisCollision: Handling collision enter for {axisName}");
-
-            if (rightGripAction == null || rightGripAction.action == null)
-            {
-                Debug.LogError("HandleAxisCollision: RightGripAction or its action is null in HandleAxisCollision.");
-                return;
-            }
-
-            if (!rightGripAction.action.IsPressed())
-            {
-                Debug.Log("HandleAxisCollision: Grip conditions not met for axis selection.");
-                return;
-            }
-
-            switch (axisName)
-            {
-                case "X-Axis":
-                    currentSelectedAxis = xAxis;
-                    break;
-                case "Y-Axis":
-                    currentSelectedAxis = yAxis;
-                    break;
-                case "Z-Axis":
-                    currentSelectedAxis = zAxis;
-                    break;
-                default:
-                    Debug.LogError($"HandleAxisCollision: Unknown axis: {axisName}");
-                    return;
-            }
-
-            if (currentSelectedAxis != null)
-            {
-                isScaling = true;
-                initialControllerPosition = other.transform.position;
-                initialScale = transform.localScale;
-                Debug.Log($"HandleAxisCollision: Scaling setup complete. Axis: {axisName}, Initial Position: {initialControllerPosition}, Initial Scale: {initialScale}");
-            }
-        }
-        else
-        {
-            Debug.Log($"HandleAxisCollision: Collision exit for {axisName}");
-            StopScaling();
-        }
+        Debug.Log("Not in scale mode, ignoring collision.");
+        return;
     }
+
+    if (isEntering)
+    {
+        if (rightGripAction == null || rightGripAction.action == null)
+        {
+            Debug.LogError("RightGripAction is null.");
+            return;
+        }
+
+        if (!rightGripAction.action.IsPressed())
+        {
+            Debug.Log("Grip not pressed.");
+            return;
+        }
+
+        axisName = axisName.Replace("(Clone)", "").Trim();
+        switch (axisName)
+        {
+            case "X-Axis":
+                currentSelectedAxis = xAxis;
+                initialScaleX = targetObject.localScale;
+                break;
+            case "Y-Axis":
+                currentSelectedAxis = yAxis;
+                initialScaleY = targetObject.localScale;
+                break;
+            case "Z-Axis":
+                currentSelectedAxis = zAxis;
+                initialScaleZ = targetObject.localScale;
+                break;
+            default:
+                return;
+        }
+
+        isScaling = true;
+        initialControllerPosition = other.transform.position;
+        Debug.Log($"Started scaling {axisName}");
+    }
+    else
+    {
+        StopScaling();
+    }
+}
+
 
     private void StopScaling()
     {
         isScaling = false;
         currentSelectedAxis = null;
-        Debug.Log("Stopped scaling.");
+        Debug.Log("Stopped scaling");
     }
 
     private void Update()
     {
-        if (isScaling && currentSelectedAxis != null)
+        if (isScaling && currentSelectedAxis != null && rightGripAction != null && rightGripAction.action.IsPressed() )
         {
             UpdateScaling();
         }
     }
 
-    private void UpdateScaling()
+
+private void UpdateScaling()
 {
-    Vector3 controllerPosition = currentSelectedAxis.position; 
-    Vector3 objectCenter = transform.position;
+    if (currentSelectedAxis == null)
+    {
+        Debug.LogError("No axis selected for scaling.");
+        return;
+    }
 
-    Vector3 directionToController = controllerPosition - objectCenter;
+    Vector3 currentControllerPosition = interactor.transform.position;
+    Vector3 axisDirection = Vector3.zero;
 
-    Vector3 projectionAxis = Vector3.right; 
-    if (currentSelectedAxis == yAxis)
-        projectionAxis = Vector3.up;
-    else if (currentSelectedAxis == zAxis)
-        projectionAxis = Vector3.forward;
-
-    // 4. 计算投影长度
-    float projectedDistance = Vector3.Dot(directionToController, projectionAxis);
-    
-    // 5. 计算新的缩放值（减去初始距离得到delta）
-    float initialDistance = Vector3.Dot(initialControllerPosition - objectCenter, projectionAxis);
-    float scaleDelta = projectedDistance - initialDistance;
-
-    // 6. 应用新的缩放值
-    Vector3 newScale = initialScale;
     if (currentSelectedAxis == xAxis)
-        newScale.x = Mathf.Max(0.1f, initialScale.x + scaleDelta);
+        axisDirection = Vector3.right;
     else if (currentSelectedAxis == yAxis)
-        newScale.y = Mathf.Max(0.1f, initialScale.y + scaleDelta);
+        axisDirection = Vector3.up;
     else if (currentSelectedAxis == zAxis)
-        newScale.z = Mathf.Max(0.1f, initialScale.z + scaleDelta);
+        axisDirection = Vector3.forward;
 
-    // 7. 更新物体缩放
-    transform.localScale = newScale;
+    Vector3 handDelta = currentControllerPosition - initialControllerPosition;
+    float delta = -Vector3.Dot(handDelta, axisDirection);
 
-    Debug.Log($"Scaling - Distance: {projectedDistance:F2}, Delta: {scaleDelta:F2}, New Scale: {newScale}");
+    float maxAllowedScale = 5.0f; // Set the maximum allowed scale
+    Vector3 newScale = targetObject.localScale;
+
+    if (currentSelectedAxis == xAxis)
+        newScale.x = Mathf.Clamp(initialScaleX.x + delta, 0.1f, maxAllowedScale);
+    else if (currentSelectedAxis == yAxis)
+        newScale.y = Mathf.Clamp(initialScaleY.y + delta, 0.1f, maxAllowedScale);
+    else if (currentSelectedAxis == zAxis)
+        newScale.z = Mathf.Clamp(initialScaleZ.z + delta, 0.1f, maxAllowedScale);
+
+    targetObject.localScale = newScale;
+
+    UpdateAxesPosition();
 }
+
+//     private void UpdateScaling()
+// {
+
+//     Debug.Log($"start update scaling!! {currentSelectedAxis}");
+//     if (currentSelectedAxis == null)
+//     {
+//         Debug.LogError("No axis selected for scaling.");
+//         return;
+//     }
+
+//     Debug.Log($"debuggggg1111");
+
+//     // Get the current position of the controller and the object center
+//     Vector3 currentControllerPosition = interactor.transform.position;
+//     // Vector3 objectCenter = transform.position;
+
+//     // Determine the direction vector based on the selected axis
+//     Vector3 axisDirection = Vector3.zero;
+//     Quaternion objectRotation = transform.rotation;
+
+//     Debug.Log($"debuggggg22222");
+
+
+//     if (currentSelectedAxis == xAxis)
+//     {
+//         axisDirection = objectRotation * Vector3.right; // Apply object rotation
+//     }
+//     else if (currentSelectedAxis == yAxis)
+//     {
+//         axisDirection = objectRotation * Vector3.up;
+//     }
+//     else if (currentSelectedAxis == zAxis)
+//     {
+//         axisDirection = objectRotation * Vector3.forward;
+//     }
+
+//     Debug.Log($"debuggggg3333");
+
+
+//     // Calculate the hand delta along the selected axis direction
+//     Vector3 handDelta = currentControllerPosition - initialControllerPosition;
+//     float delta = -Vector3.Dot(handDelta, axisDirection); // Project onto the selected axis
+
+//     Debug.Log($"delta is {delta}");
+//     // Compute the new scale for the selected axis
+//     float maxAllowedScale = 5.0f; // Set the maximum allowed scale (adjust as needed)
+
+//     // Compute the new scale for the target object
+//     Vector3 newScale = targetObject.localScale;
+
+//     switch (currentSelectedAxis)
+//     {
+//         case var axis when axis == xAxis:
+//             newScale.x = Mathf.Clamp(targetObject.localScale.x + delta, 0.1f, maxAllowedScale);
+//             break;
+//         case var axis when axis == yAxis:
+//             newScale.y = Mathf.Clamp(targetObject.localScale.y + delta, 0.1f, maxAllowedScale);
+//             break;
+//         case var axis when axis == zAxis:
+//             newScale.z = Mathf.Clamp(targetObject.localScale.z + delta, 0.1f, maxAllowedScale);
+//             break;
+//     }
+
+//     targetObject.localScale = newScale;
+
+
+//     UpdateAxesPosition();
+// }
+
+
+// Helper method to update axis positions based on object bounds
+private void UpdateAxesPosition()
+{
+    Renderer objectRenderer = GetComponent<Renderer>();
+    if (objectRenderer == null)
+    {
+        Debug.LogError("No Renderer found on the object. Cannot update axis positions.");
+        return;
+    }
+
+    Bounds objectBounds = objectRenderer.bounds;
+
+    if (xAxis != null)
+        xAxis.position = objectBounds.center + objectBounds.extents.x * Vector3.right;
+    if (yAxis != null)
+        yAxis.position = objectBounds.center + objectBounds.extents.y * Vector3.up;
+    if (zAxis != null)
+        zAxis.position = objectBounds.center + objectBounds.extents.z * Vector3.forward;
+}
+
+    public void ClearAxes()
+    {
+        if (xAxis != null)
+        {
+            Destroy(xAxis.gameObject); // Destroy the axis GameObject
+            xAxis = null; // Clear the reference
+        }
+
+        if (yAxis != null)
+        {
+            Destroy(yAxis.gameObject);
+            yAxis = null;
+        }
+
+        if (zAxis != null)
+        {
+            Destroy(zAxis.gameObject);
+            zAxis = null;
+        }
+
+        Debug.Log("Cleared all axes.");
+    }
+
+    public void SetTargetObject(Transform target)
+  {
+      targetObject = target;
+      if (targetObject == null)
+      {
+          Debug.LogError("Target object is null! Ensure you assign it correctly.");
+      }
+      else
+      {
+          Debug.Log($"Target object set to: {targetObject.name}");
+      }
+  }
+
 }

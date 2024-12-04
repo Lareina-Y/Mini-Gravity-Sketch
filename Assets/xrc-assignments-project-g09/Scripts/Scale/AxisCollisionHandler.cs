@@ -3,35 +3,41 @@ using UnityEngine.InputSystem;
 
 public class AxisCollisionHandler : MonoBehaviour
 {
-    private AxisScaleController controller;
-    private bool isTriggered;
-    private string axisName;
-    private Collider otherObject;
+    private AxisScaleController controller; // Dynamically assigned controller
+    private bool isTriggered = false;       // Whether the axis is triggered
+    private string axisName;               // Name of the axis (X, Y, Z)
+    private Collider otherObject;          // The object that triggered the collider
     
+
+
     [Header("Input Actions")]
     [SerializeField]
-    private InputActionReference rightGripAction;
+    private InputActionReference rightGripAction; // Input action for grip button
 
-    private void Start()
+    /// <summary>
+    /// Dynamically assign AxisScaleController to this handler.
+    /// </summary>
+    /// <param name="assignedController">The AxisScaleController managing scaling.</param>
+    public void Initialize(AxisScaleController assignedController)
     {
+        Debug.Log($"try to init the controller!!! {assignedController}");
+        controller = assignedController;
+        axisName = gameObject.name;
 
-        controller = GetComponentInParent<AxisScaleController>();
-        axisName = gameObject.name;  
-        
         if (controller == null)
         {
-            Debug.LogError($"Cannot find AxisScaleController for {axisName}");
+            Debug.LogError($"[{axisName}] AxisScaleController is not assigned!");
         }
         else
         {
-            Debug.Log($"Successfully initialized {axisName} with controller");
+            Debug.Log($"[{axisName}] Successfully assigned AxisScaleController.");
         }
 
-
+        // Enable grip input action
         if (rightGripAction != null)
         {
             rightGripAction.action.Enable();
-            Debug.Log($"[{axisName}] Right grip action enabled");
+            Debug.Log($"[{axisName}] Right grip action enabled.");
         }
         else
         {
@@ -41,43 +47,43 @@ public class AxisCollisionHandler : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"[{axisName}] Trigger Enter with {other.gameObject.name}");
-        if (AxisScaleController.IsInScaleMode)
+        if (controller != null && controller.IsInScaleMode)
         {
             isTriggered = true;
             otherObject = other;
-            Debug.Log($"[{axisName}] Triggered: {isTriggered}, Other: {otherObject.name}");
+            Debug.Log($"[{axisName}] Trigger Enter with {other.gameObject.name}, isTriggered: {isTriggered}");
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log($"[{axisName}] Trigger Exit");
-        if (AxisScaleController.IsInScaleMode)
+        if (controller != null && controller.IsInScaleMode)
         {
             isTriggered = false;
             otherObject = null;
-            Debug.Log($"[{axisName}] Reset trigger state");
+            Debug.Log($"[{axisName}] Trigger Exit, reset trigger state");
         }
     }
 
     private void Update()
     {
-        // Debug.Log($"[{axisName}] Status:" +
-        //     $"\n - Controller: {controller != null}" +
-        //     $"\n - Scale Mode: {AxisScaleController.IsInScaleMode}" +
-        //     $"\n - Is Triggered: {isTriggered}" +
-        //     $"\n - Grip Action: {(rightGripAction != null ? "Set" : "Not Set")}" +
-        //     $"\n - Grip Pressed: {(rightGripAction != null ? rightGripAction.action.IsPressed().ToString() : "N/A")}");
-
-        if (controller != null && AxisScaleController.IsInScaleMode && isTriggered)
+        // Check if scaling conditions are met
+        if (controller != null && controller.IsInScaleMode && isTriggered)
         {
-            Debug.Log($"[{axisName}] Base conditions met");
             if (rightGripAction != null && rightGripAction.action.IsPressed())
             {
                 Debug.Log($"[{axisName}] Grip pressed, handling collision");
                 controller.HandleAxisCollision(axisName, otherObject, true);
             }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // Disable grip input action to avoid memory leaks
+        if (rightGripAction != null)
+        {
+            rightGripAction.action.Disable();
         }
     }
 }
