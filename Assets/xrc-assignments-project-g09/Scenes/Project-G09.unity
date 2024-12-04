@@ -1925,6 +1925,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rightGripAction: {fileID: 5667446173830999989, guid: 0be0028c24f2a4c14a96b6aa39055933, type: 3}
+  interactor: {fileID: 1070521584}
 --- !u!1 &2067549582
 GameObject:
   m_ObjectHideFlags: 0
