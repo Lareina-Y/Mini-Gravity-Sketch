@@ -68,6 +68,10 @@ namespace UndoRedo.Core
                 command.Undo();
                 redoStack.Push(command);
             }
+            else
+            {
+                Debug.Log("Undo: No command to undo");
+            }
         }
 
         public void Redo()
@@ -77,6 +81,10 @@ namespace UndoRedo.Core
                 var command = redoStack.Pop();
                 command.Execute();
                 undoStack.Push(command);
+            }
+            else
+            {
+                Debug.Log("Redo: No command to redo");
             }
         }
 

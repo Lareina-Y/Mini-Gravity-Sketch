@@ -5,6 +5,9 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using MeshManipulation;
 using MeshManipulation.UI;
 using System.Collections.Generic;
+using UndoRedo.Core;
+using UndoRedo.Commands;
+using UnityEngine.InputSystem;
 
 public class SphereSelectLogic : MonoBehaviour
 {
@@ -26,6 +29,12 @@ public class SphereSelectLogic : MonoBehaviour
     private float currentRadius;
     private Vector3 sphereOffset;
     private MeshSelectionUI.SelectionMode currentMode = MeshSelectionUI.SelectionMode.Object;
+
+    [SerializeField] private InputActionProperty undoAction;
+    [SerializeField] private InputActionProperty redoAction;
+
+    private Transform selectedObjectTransform;
+    private Vector3 initialPosition;
 
     // Properties
     public float CurrentRadius => currentRadius;
@@ -61,6 +70,12 @@ public class SphereSelectLogic : MonoBehaviour
     
     void Start()
     {
+
+        // Make sure the UndoRedoManager is in the scene
+        if (UndoRedoManager.Instance == null)
+        {
+            Debug.LogError("UndoRedoManager is not in the scene. Please add it to the scene.");
+        }
 
         sphereCollider = interactor.GetComponent<SphereCollider>();
         sphereCollider.isTrigger = true;
@@ -110,7 +125,7 @@ public class SphereSelectLogic : MonoBehaviour
         interactor.selectEntered.AddListener(OnSelectEntered);
         interactor.selectExited.AddListener(OnSelectExited);
 
-
+        OnEnable();
     }
 
     void OnDestroy()
@@ -127,6 +142,8 @@ public class SphereSelectLogic : MonoBehaviour
             interactor.selectEntered.RemoveListener(OnSelectEntered);
             interactor.selectExited.RemoveListener(OnSelectExited);
         }
+
+        OnDisable();
     }
 
     private void HandleModeChange(MeshSelectionUI.SelectionMode newMode)
@@ -208,6 +225,12 @@ public class SphereSelectLogic : MonoBehaviour
 
     private void OnSelectEntered(SelectEnterEventArgs args)
     {
+        if (args.interactableObject.transform != null)
+        {
+            selectedObjectTransform = args.interactableObject.transform;
+            initialPosition = selectedObjectTransform.position;
+        }
+
         // Get collider position in world space
         Vector3 colliderWorldPosition = interactor.transform.TransformPoint(sphereCollider.center);
 
@@ -278,11 +301,49 @@ public class SphereSelectLogic : MonoBehaviour
 
     private void OnSelectExited(SelectExitEventArgs args)
     {
+        if (selectedObjectTransform != null)
+        {
+            Vector3 finalPosition = selectedObjectTransform.position;
+            if (initialPosition != finalPosition)
+            {
+                var moveCommand = new MoveCommand(selectedObjectTransform, initialPosition, finalPosition);
+                UndoRedoManager.Instance.ExecuteCommand(moveCommand);
+                Debug.Log("Move command executed");
+            }
+            selectedObjectTransform = null;
+        }
+
         OnSelectExitedEvent?.Invoke(args);
     }
 
     public SphereCollider GetSphereCollider()
     {
         return sphereCollider;
+    }
+
+    private void OnEnable()
+    {
+        undoAction.action.Enable();
+        redoAction.action.Enable();
+        undoAction.action.performed += OnUndo;
+        redoAction.action.performed += OnRedo;
+    }
+
+    private void OnDisable()
+    {
+        undoAction.action.performed -= OnUndo;
+        redoAction.action.performed -= OnRedo;
+        undoAction.action.Disable();
+        redoAction.action.Disable();
+    }
+
+    private void OnUndo(InputAction.CallbackContext context)
+    {
+        UndoRedoManager.Instance.Undo();
+    }
+
+    private void OnRedo(InputAction.CallbackContext context)
+    {
+        UndoRedoManager.Instance.Redo();
     }
 }

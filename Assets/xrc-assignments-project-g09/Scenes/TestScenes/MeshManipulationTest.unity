@@ -1500,6 +1500,30 @@ MonoBehaviour:
   vertexSelectionThreshold: 0.05
   edgeSelectionThreshold: 0.05
   faceSelectionThreshold: 0.05
+  undoAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Undo
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: c01a95a4-61c1-4c90-a2f8-76c19e09cf3f
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -5879636751518716959, guid: d6ba96b1c4d863143ab4a01861a84c33, type: 3}
+  redoAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Redo
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 2887db5b-6125-4ca1-8900-fa4f8e5a92da
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 4889027042498800338, guid: d6ba96b1c4d863143ab4a01861a84c33, type: 3}
 --- !u!114 &749665779
 MonoBehaviour:
   m_ObjectHideFlags: 0
