@@ -6,6 +6,7 @@ public class ColorPanel : MonoBehaviour
 {
     [SerializeField] private GameObject m_ColorPanel;
     [SerializeField] private RawImage m_ColorWheel;
+    [SerializeField] private float m_CylinderHeight = 100f;
     
     private float m_Hue = 0f;
     private float m_Saturation = 0f;
@@ -64,12 +65,12 @@ public class ColorPanel : MonoBehaviour
         m_Hue = Mathf.Clamp01(angle / (Mathf.PI * 2f));
         
         Vector2 distanceXY = new Vector2(diff.x, diff.y);
-        m_Saturation = Mathf.Clamp01(distanceXY.magnitude / 0.1f);
+        m_Saturation = Mathf.Clamp01(distanceXY.magnitude / 100f);
         
         // Set V and move color wheel
-        float posZ = Mathf.Clamp(diff.z, -0.1f, 0f);
+        float posZ = Mathf.Clamp(diff.z, - m_CylinderHeight, 0f);
         m_ColorWheel.transform.localPosition = new Vector3(0, 0, posZ);
-        m_Value = -posZ * 10f;
+        m_Value = -posZ / m_CylinderHeight;
         m_ColorWheel.color = Color.HSVToRGB(0, 0, m_Value);
     }
     

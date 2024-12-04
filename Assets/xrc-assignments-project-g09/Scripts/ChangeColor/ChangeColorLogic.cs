@@ -16,7 +16,7 @@ public class ChangeColorLogic : MonoBehaviour
     private ColorPanel m_ColorPanel;
     private Color m_Color;
     private GameObject m_Pointer;
-    private Pose attachPose;
+    private Pose m_AttachPose;
     private GameObject m_TargetObject; // TODO: material issue
 
     private bool m_IsChanging;
@@ -63,23 +63,29 @@ public class ChangeColorLogic : MonoBehaviour
         if (eventArgs.interactableObject is IXRSelectInteractable selectInteractable)
         {
             m_TargetObject = selectInteractable.transform.gameObject;
-            attachPose = selectInteractable.GetAttachPoseOnSelect(m_Interactor);
+            
+            // Get attach pose
+            m_AttachPose = selectInteractable.GetAttachPoseOnSelect(m_Interactor);
         }
     }
 
     public void ChangeColor()
     {
-        // Release the object and move to poseOnSelect?
-        m_Interactor.interactionManager.SelectExit(m_Interactor, m_Interactor.firstInteractableSelected);
-        m_TargetObject.transform.SetPositionAndRotation(attachPose.position, attachPose.rotation);
+        if (m_TargetObject != null)
+        {
+            // Release the object and move to poseOnSelect
+            m_Interactor.interactionManager.SelectExit(m_Interactor, m_Interactor.firstInteractableSelected);
+            m_TargetObject.transform.SetPositionAndRotation(m_AttachPose.position, m_AttachPose.rotation);
         
-        m_ColorPanel.SetActive(true);
-        m_Pointer.SetActive(true);
-        m_IsChanging = true;
+            m_ColorPanel.SetActive(true);
+            m_Pointer.SetActive(true);
+            m_IsChanging = true;
+        }
     }
 
     public void EndChangeColor()
     {
+        m_TargetObject = null;
         m_ColorPanel.SetActive(false);
         m_Pointer.SetActive(false);
         m_IsChanging = false;
