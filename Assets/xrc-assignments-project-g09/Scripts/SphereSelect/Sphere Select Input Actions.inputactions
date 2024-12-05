@@ -1,0 +1,34 @@
+{
+    "name": "Sphere Select Input Actions",
+    "maps": [
+        {
+            "name": "Sphere Select",
+            "id": "220ef3c6-f663-433f-a2fc-56352bb1a6e6",
+            "actions": [
+                {
+                    "name": "Change Sphere Radius",
+                    "type": "Value",
+                    "id": "8695434b-4212-4568-83cb-848c88792f20",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c2f002e2-6f17-442d-aab2-f12cfa8944d3",
+                    "path": "<XRController>{RightHand}/joystick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Change Sphere Radius",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
