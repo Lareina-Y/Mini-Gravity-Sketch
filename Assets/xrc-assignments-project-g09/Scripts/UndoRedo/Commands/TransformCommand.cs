@@ -6,32 +6,32 @@ namespace UndoRedo.Commands
     public class TransformCommand : IUndoRedoCommand
     {
         private Transform targetTransform;
-        private Vector3 oldPosition;
-        private Vector3 newPosition;
-        private Quaternion oldRotation;
-        private Quaternion newRotation;
+        private Vector3 initialPosition;
+        private Vector3 currentPosition;
+        private Quaternion initialRotation;
+        private Quaternion currentRotation;
 
         public string CommandName => "Transform Change";
 
-        public TransformCommand(Transform target, Vector3 newPos, Quaternion newRot)
+        public TransformCommand(Transform target, Vector3 initialPos, Vector3 currentPos, Quaternion initialRot, Quaternion currentRot)
         {
             targetTransform = target;
-            oldPosition = target.position;
-            oldRotation = target.rotation;
-            newPosition = newPos;
-            newRotation = newRot;
+            initialPosition = initialPos;
+            currentPosition = currentPos;
+            initialRotation = initialRot;
+            currentRotation = currentRot;
         }
 
         public void Execute()
         {
-            targetTransform.position = newPosition;
-            targetTransform.rotation = newRotation;
+            targetTransform.position = initialPosition;
+            targetTransform.rotation = initialRotation;
         }
 
         public void Undo()
         {
-            targetTransform.position = oldPosition;
-            targetTransform.rotation = oldRotation;
+            targetTransform.position = currentPosition;
+            targetTransform.rotation = currentRotation;
         }
     }
 }

@@ -20,9 +20,6 @@ public class SphereSelectLogic : MonoBehaviour
     [SerializeField] private float minRadius = 0.01f;
     [SerializeField] private float maxRadius = 0.3f;
     [SerializeField] private float defaultRadius = 0.04f;
-    [SerializeField] private float vertexSelectionThreshold = 0.05f;
-    [SerializeField] private float edgeSelectionThreshold = 0.05f;
-    [SerializeField] private float faceSelectionThreshold = 0.05f;
 
     private SphereCollider sphereCollider;
     private Vector3 sphereColliderOffset;
@@ -36,6 +33,9 @@ public class SphereSelectLogic : MonoBehaviour
     private Transform selectedObjectTransform;
     private Vector3 initialPosition;
 
+    private List<(GameObject gameObject, Vector3 initialPosition, Quaternion initialRotation)> initialTransforms 
+        = new List<(GameObject gameObject, Vector3 initialPosition, Quaternion initialRotation)>();
+
     // Properties
     public float CurrentRadius => currentRadius;
     public float DefaultRadius => defaultRadius;
@@ -48,6 +48,7 @@ public class SphereSelectLogic : MonoBehaviour
     public event System.Action<bool, HoverExitEventArgs> OnHoverExitedEvent;
     public event System.Action<List<MeshRenderer>> OnSelectEnteredEvent;
     public event System.Action<SelectExitEventArgs> OnSelectExitedEvent;
+
 
     void Awake()
     {
@@ -106,7 +107,7 @@ public class SphereSelectLogic : MonoBehaviour
 
         if (meshManipulationLogic == null)
         {
-            meshManipulationLogic = FindObjectOfType<MeshManipulationLogic>();
+            meshManipulationLogic = FindFirstObjectByType<MeshManipulationLogic>();
         }
         
         if (meshManipulationLogic != null)
@@ -219,11 +220,8 @@ public class SphereSelectLogic : MonoBehaviour
 
     private void OnSelectEntered(SelectEnterEventArgs args)
     {
-        if (args.interactableObject.transform != null)
-        {
-            selectedObjectTransform = args.interactableObject.transform;
-            initialPosition = selectedObjectTransform.position;
-        }
+        // Clear previous records
+        initialTransforms.Clear();
 
         // Get collider position in world space
         Vector3 colliderWorldPosition = interactor.transform.TransformPoint(sphereCollider.center);
@@ -245,11 +243,19 @@ public class SphereSelectLogic : MonoBehaviour
             if (collider.gameObject.TryGetComponent(out MeshRenderer meshRenderer))
             {
                 selectedRenderers.Add(meshRenderer);
+                
+                // Record initial transform
+                GameObject obj = collider.gameObject;
+                initialTransforms.Add((
+                    obj,
+                    obj.transform.position,
+                    obj.transform.rotation
+                ));
+
                 if (meshManipulationLogic != null && mode == MeshSelectionUI.SelectionMode.Object)
                 {
-                    meshManipulationLogic.SetSelectedObject(collider.gameObject);
+                    meshManipulationLogic.SetSelectedObject(obj);
                 }
-                // OnObjectSelected?.Invoke(collider.gameObject);
             }
 
             if (collider.gameObject.TryGetComponent(out XRBaseInteractable interactable))
@@ -265,18 +271,23 @@ public class SphereSelectLogic : MonoBehaviour
 
     private void OnSelectExited(SelectExitEventArgs args)
     {
-        if (selectedObjectTransform != null)
+        // Handle all transformed objects
+        foreach (var (obj, initPos, initRot) in initialTransforms)
         {
-            Vector3 finalPosition = selectedObjectTransform.position;
-            if (initialPosition != finalPosition)
+            if (obj != null)
             {
-                var moveCommand = new MoveCommand(selectedObjectTransform, initialPosition, finalPosition);
-                UndoRedoManager.Instance.ExecuteCommand(moveCommand);
-                Debug.Log("Move command executed");
+                Vector3 finalPosition = obj.transform.position;
+                Quaternion finalRotation = obj.transform.rotation;
+
+                if (initPos != finalPosition || initRot != finalRotation)
+                {
+                    var transformCommand = new TransformCommand(obj.transform, initPos, finalPosition, initRot, finalRotation);
+                    // UndoRedoManager.Instance.ExecuteCommand(transformCommand);
+                }
             }
-            selectedObjectTransform = null;
         }
 
+        // Clear the transforms list
         OnSelectExitedEvent?.Invoke(args);
     }
 
@@ -310,4 +321,15 @@ public class SphereSelectLogic : MonoBehaviour
     {
         UndoRedoManager.Instance.Redo();
     }
+
+    public (Vector3 position, Quaternion rotation)? GetInitialTransform(GameObject obj)
+    {
+        var transform = initialTransforms.Find(t => t.gameObject == obj);
+        if (transform != default)
+        {
+            return (transform.initialPosition, transform.initialRotation);
+        }
+        return null;
+    }
+
 }
