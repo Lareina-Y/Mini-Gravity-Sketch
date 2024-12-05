@@ -235,68 +235,34 @@ public class SphereSelectLogic : MonoBehaviour
         Vector3 colliderWorldPosition = interactor.transform.TransformPoint(sphereCollider.center);
 
         var currentMode = meshManipulationLogic.GetCurrentMode();
-        switch (currentMode)
+        
+        if (currentMode == MeshSelectionUI.SelectionMode.Object)
         {
-            case MeshSelectionUI.SelectionMode.Object:
-                SelectObjects(colliderWorldPosition);
-                break;
-            case MeshSelectionUI.SelectionMode.Vertex:
-                SelectVertices(colliderWorldPosition);
-                break;
-            case MeshSelectionUI.SelectionMode.Edge:
-                SelectEdges(colliderWorldPosition);
-                break;
-            case MeshSelectionUI.SelectionMode.Face:
-                SelectFaces(colliderWorldPosition);
-                break;
+            SelectObjects(colliderWorldPosition);
         }
     }
 
     private void SelectObjects(Vector3 position)
     {
-        // Use Physics.OverlapSphere directly to detect objects in range
+        // Use Physics.OverlapSphere to detect objects in range
         Collider[] colliders = Physics.OverlapSphere(position, sphereCollider.radius);
-        
         List<MeshRenderer> selectedRenderers = new List<MeshRenderer>();
 
         foreach (Collider collider in colliders)
         {
-            if (collider.gameObject.TryGetComponent(out XRBaseInteractable interactable))
-            {   
-                IXRSelectInteractable selectInteractable = (IXRSelectInteractable)interactable;
-                if (selectInteractable.transform.TryGetComponent(out MeshRenderer meshRenderer))
+            if (collider.gameObject.TryGetComponent(out MeshRenderer meshRenderer))
+            {
+                selectedRenderers.Add(meshRenderer);
+                if (meshManipulationLogic != null)
                 {
-                    selectedRenderers.Add(meshRenderer);
-                    
-                    if (meshManipulationLogic != null)
-                    {
-                        meshManipulationLogic.SetSelectedObject(selectInteractable.transform.gameObject);
-                    }
+                    meshManipulationLogic.SetSelectedObject(collider.gameObject);
                 }
-                
-                interactor.interactionManager.SelectEnter(interactor, selectInteractable);
-                OnObjectSelected?.Invoke(selectInteractable.transform.gameObject);
+                OnObjectSelected?.Invoke(collider.gameObject);
             }
         }
 
+        // Trigger the feedback event with the selected renderers
         OnSelectEnteredEvent?.Invoke(selectedRenderers);
-    }
-
-    private void SelectVertices(Vector3 position)
-    {
-        // TODO: Implement vertex selection logic using sphere overlap
-    }
-
-    private void SelectEdges(Vector3 position)
-    {
-        // TODO: Implement edge selection logic using sphere overlap
-        // This will be implemented in the next step
-    }
-
-    private void SelectFaces(Vector3 position)
-    {
-        // TODO: Implement face selection logic using sphere overlap
-        // This will be implemented in the next step
     }
 
     private void OnSelectExited(SelectExitEventArgs args)

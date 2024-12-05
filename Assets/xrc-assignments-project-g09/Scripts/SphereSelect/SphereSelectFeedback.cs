@@ -11,24 +11,21 @@ public class SphereSelectFeedback : MonoBehaviour
     [SerializeField] private Material sphereMaterial;
     [SerializeField] private Color sphereNormalColor = new Color(0, 0.5f, 1f, 0.5f);
     [SerializeField] private Color sphereHoverColor = new Color(0, 1f, 0.5f, 0.5f);
+    [SerializeField] private Color objectHoverColor = new Color(0, 1f, 0.5f, 1f);
+    [SerializeField] private Color objectSelectColor = new Color(0, 0.5f, 1f, 1f);
 
-    [SerializeField] private Color objectNormalColor = new Color(0.5f, 0.5f, 0.5f, 1);
-    [SerializeField] private Color objectHoverColor = new Color(0.6f, 0.75f, 0.6f, 1);
-    [SerializeField] private Color objectSelectColor = new Color(0.35f, 0.85f, 0.35f, 1);
-
-
+    // Store original materials and their properties
+    private Dictionary<MeshRenderer, Material[]> originalMaterials = new Dictionary<MeshRenderer, Material[]>();
     private List<MeshRenderer> selectedRenderers = new List<MeshRenderer>();
     private GameObject sphereIndicator;
     private MeshRenderer sphereRenderer;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Awake(){
+    void Awake()
+    {
         CreateSphereIndicator();
     }
 
-    void Start(){
-
-    }
+    void Start() { }
 
     private void OnEnable()
     {
@@ -46,6 +43,7 @@ public class SphereSelectFeedback : MonoBehaviour
         sphereLogic.OnHoverExitedEvent -= OnHoverExited;
         sphereLogic.OnSelectEnteredEvent -= OnSelectEntered;
         sphereLogic.OnSelectExitedEvent -= OnSelectExited;
+        RestoreAllMaterials();
     }
 
     private void UpdateSphereIndicator(Vector3 center, float radius)
@@ -65,64 +63,165 @@ public class SphereSelectFeedback : MonoBehaviour
 
         // Remove collider
         Destroy(sphereIndicator.GetComponent<Collider>());
-
+        
         // Set material color
         sphereMaterial.SetColor("_BaseColor", sphereNormalColor);
         sphereRenderer = sphereIndicator.GetComponent<MeshRenderer>();
         sphereRenderer.material = sphereMaterial;
     }
 
+    private void StoreMaterials(MeshRenderer renderer)
+    {
+        if (!originalMaterials.ContainsKey(renderer))
+        {
+            // Store a copy of all materials
+            Material[] materials = renderer.materials;
+            Material[] materialsCopy = new Material[materials.Length];
+            for (int i = 0; i < materials.Length; i++)
+            {
+                materialsCopy[i] = new Material(materials[i]);
+            }
+            originalMaterials[renderer] = materialsCopy;
+        }
+    }
+
+    private void RestoreMaterials(MeshRenderer renderer)
+    {
+        if (originalMaterials.ContainsKey(renderer))
+        {
+            renderer.materials = originalMaterials[renderer];
+            originalMaterials.Remove(renderer);
+        }
+    }
+
+    private void RestoreAllMaterials()
+    {
+        foreach (var renderer in originalMaterials.Keys)
+        {
+            if (renderer != null)
+            {
+                renderer.materials = originalMaterials[renderer];
+            }
+        }
+        originalMaterials.Clear();
+        selectedRenderers.Clear();
+    }
+
+    private void ApplyColor(MeshRenderer renderer, Color color)
+    {
+        StoreMaterials(renderer);
+        Material[] materials = renderer.materials;
+        
+        for (int i = 0; i < materials.Length; i++)
+        {
+            // Create a new material instance to avoid modifying the shared material
+            Material newMaterial = new Material(materials[i]);
+            
+            // Set the new color
+            if (newMaterial.HasProperty("_BaseColor"))
+            {
+                newMaterial.SetColor("_BaseColor", color);
+            }
+            else if (newMaterial.HasProperty("_Color"))
+            {
+                newMaterial.SetColor("_Color", color);
+            }
+            
+            materials[i] = newMaterial;
+        }
+        
+        renderer.materials = materials;
+    }
+
     private void OnHoverEntered(HoverEnterEventArgs args)
     {
         sphereMaterial.SetColor("_BaseColor", sphereHoverColor);
 
-        // Set the color of the hovered object
-        UnityEngine.XR.Interaction.Toolkit.Interactables.IXRHoverInteractable hoverInteractable = (UnityEngine.XR.Interaction.Toolkit.Interactables.IXRHoverInteractable) args.interactableObject;
-        MeshRenderer meshRenderer = hoverInteractable.transform.GetComponent<MeshRenderer>();
-        meshRenderer.material.color = objectHoverColor;
+        var hoverInteractable = (UnityEngine.XR.Interaction.Toolkit.Interactables.IXRHoverInteractable)args.interactableObject;
+        if (hoverInteractable.transform.TryGetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>(out var grabInteractable))
+        {
+            var interactionLayers = grabInteractable.interactionLayers.value;
+            bool hasSelectLayer = 
+                (interactionLayers & InteractionLayerMask.GetMask("SphereSelectVertex")) != 0 ||
+                (interactionLayers & InteractionLayerMask.GetMask("SphereSelectEdge")) != 0 ||
+                (interactionLayers & InteractionLayerMask.GetMask("SphereSelectFace")) != 0;
+
+            if (hasSelectLayer && hoverInteractable.transform.TryGetComponent<MeshRenderer>(out var meshRenderer))
+            {
+                ApplyColor(meshRenderer, objectHoverColor);
+            }
+        }
     }
 
     private void OnHoverExited(bool hasHover, HoverExitEventArgs args)
     {
-
-        // If no any hovered object, set the sphere color to the normal color
         if (!hasHover)
         {
             sphereMaterial.SetColor("_BaseColor", sphereNormalColor);
         }
 
-        // Set the color of the hovered object
-        UnityEngine.XR.Interaction.Toolkit.Interactables.IXRHoverInteractable hoverInteractable = (UnityEngine.XR.Interaction.Toolkit.Interactables.IXRHoverInteractable) args.interactableObject;
-        MeshRenderer meshRenderer = hoverInteractable.transform.GetComponent<MeshRenderer>();
-        meshRenderer.material.color = objectNormalColor;
+        Debug.Log($"Hover exited: {args.interactableObject}");
+
+        var hoverInteractable = (UnityEngine.XR.Interaction.Toolkit.Interactables.IXRHoverInteractable)args.interactableObject;
+        if (hoverInteractable.transform.TryGetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>(out var grabInteractable))
+        {
+            var interactionLayers = grabInteractable.interactionLayers.value;
+            bool hasSelectLayer = 
+                (interactionLayers & InteractionLayerMask.GetMask("SphereSelectVertex")) != 0 ||
+                (interactionLayers & InteractionLayerMask.GetMask("SphereSelectEdge")) != 0 ||
+                (interactionLayers & InteractionLayerMask.GetMask("SphereSelectFace")) != 0;
+
+            if (hasSelectLayer && hoverInteractable.transform.TryGetComponent<MeshRenderer>(out var meshRenderer))
+            {
+                if (!selectedRenderers.Contains(meshRenderer))
+                {
+                    Debug.Log("Restoring material");
+                    RestoreMaterials(meshRenderer);
+                }
+            }
+            else
+            {
+                Debug.Log("Not a select layer");
+            }
+        }
     }
 
     private void OnSelectEntered(List<MeshRenderer> selectedRenderers)
     {
-        // Disable the sphere indicator
         sphereIndicator.SetActive(false);
+        this.selectedRenderers.Clear();
 
-        this.selectedRenderers = selectedRenderers;
-
-        // Set the color of the selected object
         foreach (MeshRenderer meshRenderer in selectedRenderers)
         {
-            meshRenderer.material.color = objectSelectColor;
+            if (meshRenderer.gameObject.TryGetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>(out var grabInteractable))
+            {
+                var interactionLayers = grabInteractable.interactionLayers.value;
+                bool hasSelectLayer = 
+                    (interactionLayers & InteractionLayerMask.GetMask("SphereSelectVertex")) != 0 ||
+                    (interactionLayers & InteractionLayerMask.GetMask("SphereSelectEdge")) != 0 ||
+                    (interactionLayers & InteractionLayerMask.GetMask("SphereSelectFace")) != 0;
+
+                if (hasSelectLayer)
+                {
+                    this.selectedRenderers.Add(meshRenderer);
+                    ApplyColor(meshRenderer, objectSelectColor);
+                }
+            }
         }
     }
 
     private void OnSelectExited(SelectExitEventArgs args)
     {
-        // Enable the sphere indicator
         sphereIndicator.SetActive(true);
-
-        // When unselected, the object is still hovered, so set the color to the hover color
         sphereMaterial.SetColor("_BaseColor", sphereHoverColor);
 
-        // Set the color of the selected object
         foreach (MeshRenderer meshRenderer in selectedRenderers)
         {
-            meshRenderer.material.color = objectHoverColor;
+            if (meshRenderer != null)
+            {
+                ApplyColor(meshRenderer, objectHoverColor);
+            }
         }
+        selectedRenderers.Clear();
     }
 }

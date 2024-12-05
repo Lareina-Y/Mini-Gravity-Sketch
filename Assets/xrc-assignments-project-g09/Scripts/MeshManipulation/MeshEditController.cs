@@ -41,6 +41,8 @@ namespace MeshManipulation
         private MeshCollider meshCollider;
         private bool isEditing = false;
 
+        private WireframeRenderer wireframeRenderer;
+
         public void Initialize()
         {
             if (vertexVisualizerPrefab == null)
@@ -87,6 +89,10 @@ namespace MeshManipulation
             isEditing = true;
             InitializeVertexGroups();
             HideAll();
+
+            // 添加和初始化 WireframeRenderer
+            wireframeRenderer = visualizersContainer.gameObject.AddComponent<WireframeRenderer>();
+            wireframeRenderer.Initialize();
         }
 
         private void InitializeVertexGroups()
@@ -159,6 +165,16 @@ namespace MeshManipulation
                 case MeshSelectionUI.SelectionMode.Face:
                     // TODO: ShowFaces();
                     break;
+            }
+
+            // 在任何编辑模式下都显示线框
+            if (mode != MeshSelectionUI.SelectionMode.Object)
+            {
+                wireframeRenderer.SetVisible(true);
+            }
+            else
+            {
+                wireframeRenderer.SetVisible(false);
             }
         }
 
@@ -296,6 +312,9 @@ namespace MeshManipulation
             }
 
         }
+
+        public Transform VisualizersContainer => visualizersContainer;
+
     }
 
     public class VertexPositionTracker : MonoBehaviour
