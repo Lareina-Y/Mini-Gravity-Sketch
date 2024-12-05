@@ -6,7 +6,11 @@ namespace SetShape
     public class SetShapeFeedback : MonoBehaviour
     {
         [SerializeField] private float menuDistance = 0.3f;
-        [SerializeField] private XRRayInteractor rayInteractor;
+
+        [SerializeField] private GameObject rayInteractorObject;
+
+        private XRRayInteractor rayInteractor;
+        private LineRenderer rayLineRenderer;
 
         private SetShapeUI shapeUI;
         private Camera mainCamera;
@@ -26,9 +30,12 @@ namespace SetShape
                 input.OnMenuHideRequest += HandleMenuHide;
             }
 
-            if (rayInteractor == null)
+            if (rayInteractorObject == null)
             {
-                Debug.LogError("RayInteractor is not assigned!");
+                Debug.LogError("RayInteractorObject is not assigned!");
+            }else{
+                rayInteractor = rayInteractorObject.GetComponent<XRRayInteractor>();
+                rayLineRenderer = rayInteractorObject.GetComponent<LineRenderer>();
             }
         }
 
@@ -37,11 +44,7 @@ namespace SetShape
             if (rayInteractor == null) return;
 
             // Enable ray
-            rayInteractor.enabled = true;
-            if (rayInteractor.TryGetComponent<LineRenderer>(out var lineRenderer))
-            {
-                lineRenderer.enabled = true;
-            }
+            rayInteractorObject.SetActive(true);
 
             Vector3 rayOrigin = rayInteractor.transform.position;
             Vector3 rayDirection = rayInteractor.transform.forward;
@@ -57,14 +60,7 @@ namespace SetShape
         private void HandleMenuHide()
         {
             // Disable ray
-            if (rayInteractor != null)
-            {
-                rayInteractor.enabled = false;
-                if (rayInteractor.TryGetComponent<LineRenderer>(out var lineRenderer))
-                {
-                    lineRenderer.enabled = false;
-                }
-            }
+            rayInteractorObject.SetActive(false);
 
             shapeUI.HideMenu();
         }
