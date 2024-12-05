@@ -27,7 +27,7 @@
                     "name": "Grip",
                     "type": "Button",
                     "id": "c7937c78-cea4-4888-8feb-8d9da13005f2",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -45,7 +45,7 @@
                     "name": "Primary Button",
                     "type": "Button",
                     "id": "54068f2e-4569-46ab-9864-63b23fb9c26a",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -54,7 +54,7 @@
                     "name": "Secondary Button",
                     "type": "Button",
                     "id": "970b4191-957d-4a7f-ba64-e0e701950d99",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -292,7 +292,7 @@
                 {
                     "name": "",
                     "id": "32072c42-6a30-4383-8362-d65ff475c920",
-                    "path": "<Keyboard>/g",
+                    "path": "*/{GripButton}",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -314,7 +314,7 @@
                 {
                     "name": "",
                     "id": "c17eb846-7a66-4006-9d57-6b91831868d0",
-                    "path": "<Keyboard>/b",
+                    "path": "<XRController>{LeftHand}/{PrimaryButton}",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -325,7 +325,7 @@
                 {
                     "name": "",
                     "id": "69ce3e33-7d81-423f-b162-7232a5791c2f",
-                    "path": "<Keyboard>/n",
+                    "path": "<XRController>{LeftHand}/{SecondaryButton}",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

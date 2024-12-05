@@ -14,9 +14,8 @@ GameObject:
   - component: {fileID: 8431481472381789094}
   - component: {fileID: 6686130869386438870}
   - component: {fileID: 5664365934165717260}
-  - component: {fileID: -5163289407861802554}
   m_Layer: 0
-  m_Name: ObjectCreateCube
+  m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8def861a73beac849b1ac3b1e3f2ca3f, type: 2}
+  - {fileID: 2100000, guid: 537277d2382ccbf449b4bd18c759f052, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -260,17 +259,3 @@ MonoBehaviour:
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
   m_FarAttachMode: 0
---- !u!114 &-5163289407861802554
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2350041347128276377}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21672e942d6c2d045a0156f515ee2a20, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rightGripAction: {fileID: 5667446173830999989, guid: 0be0028c24f2a4c14a96b6aa39055933, type: 3}
-  interactor: {fileID: 0}

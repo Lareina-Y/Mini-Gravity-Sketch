@@ -1,0 +1,34 @@
+{
+    "name": "Scale",
+    "maps": [
+        {
+            "name": "Scale",
+            "id": "73f75634-48b7-41e1-a2a7-cf5dc91f3060",
+            "actions": [
+                {
+                    "name": "Scale",
+                    "type": "Button",
+                    "id": "9397bc7e-6523-4242-b7f4-678ad2e2fdac",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f66e35c8-96b5-48ed-af41-28e679220b92",
+                    "path": "<XRController>{LeftHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Scale",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
