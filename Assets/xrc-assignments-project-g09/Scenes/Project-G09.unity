@@ -3001,6 +3001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a918a44b15f5d4a429c1832219f20462, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Interactor: {fileID: 1070521584}
   m_LeftButtonAAction:
     m_UseReference: 1
     m_Action:
@@ -3085,6 +3086,18 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: -220771882412347733, guid: 60490301e76fe4aff9550752f40d34dc, type: 3}
+  m_RightGripAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Right Grip
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: fc8ddf74-9f25-4c33-9810-7fd89cfb6543
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1986893532228457294, guid: 60490301e76fe4aff9550752f40d34dc, type: 3}
   leftButtonATransform: {fileID: 7513112850776061254}
   leftButtonBTransform: {fileID: 8050338879307389405}
   rightButtonATransform: {fileID: 777713601700709016}
