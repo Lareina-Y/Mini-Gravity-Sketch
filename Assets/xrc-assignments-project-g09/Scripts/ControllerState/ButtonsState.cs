@@ -1,8 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class ButtonsState : MonoBehaviour
 {
+    
+    [SerializeField]
+    private XRBaseInteractor m_Interactor;
+    
     [SerializeField]
     private InputActionProperty m_LeftButtonAAction;
 
@@ -23,6 +28,9 @@ public class ButtonsState : MonoBehaviour
     
     [SerializeField]
     private InputActionProperty m_RightTriggerAction;
+    
+    [SerializeField]
+    private InputActionProperty m_RightGripAction;
     
     [SerializeField]
     private Transform leftButtonATransform;
@@ -63,6 +71,8 @@ public class ButtonsState : MonoBehaviour
     [SerializeField]
     private Color defaultColor = Color.grey;
 
+    private Transform[] allSpritesTransforms;
+    
     protected void OnEnable()
     {
         m_LeftButtonAAction.action.Enable();
@@ -72,6 +82,7 @@ public class ButtonsState : MonoBehaviour
         m_leftHomeButtonAction.action.Enable();
         m_rightHomeButtonAction.action.Enable();
         m_RightTriggerAction.action.Enable();
+        m_RightGripAction.action.Enable();
     }
 
     protected void OnDisable()
@@ -83,10 +94,22 @@ public class ButtonsState : MonoBehaviour
         m_leftHomeButtonAction.action.Disable();
         m_rightHomeButtonAction.action.Disable();
         m_RightTriggerAction.action.Disable();
+        m_RightGripAction.action.Disable();
     }
 
     private void Start()
     {
+
+        allSpritesTransforms = new []
+        {
+            leftButtonATransform,
+            rightButtonATransform,
+            leftButtonBTransform,
+            rightButtonBTransform,
+            rightHomeButtonTransform,
+            leftThumbstickTransform,
+        };
+
         // Initialize all button colors
         SetButtonColor(leftButtonATransform, defaultColor);
         SetButtonColor(rightButtonATransform, defaultColor);
@@ -99,23 +122,30 @@ public class ButtonsState : MonoBehaviour
         m_LeftButtonAAction.action.performed += context => OnButtonPerformed(leftButtonATransform, drawFeedbackColor);
         m_LeftButtonAAction.action.canceled += context => OnButtonCanceled(leftButtonATransform);
 
-        m_RightButtonAAction.action.performed += context => OnButtonPerformed(rightButtonATransform, colorPlateFeedbackColor);
+        m_RightButtonAAction.action.performed +=
+            context => OnButtonPerformed(rightButtonATransform, colorPlateFeedbackColor);
         m_RightButtonAAction.action.canceled += context => OnButtonCanceled(rightButtonATransform);
 
         m_LeftButtonBAction.action.performed += context => OnButtonPerformed(leftButtonBTransform, menuFeedbackColor);
         m_LeftButtonBAction.action.canceled += context => OnButtonCanceled(leftButtonBTransform);
 
-        m_RightButtonBAction.action.performed += context => OnButtonPerformed(rightButtonBTransform, deleteFeedbackColor);
+        m_RightButtonBAction.action.performed +=
+            context => OnButtonPerformed(rightButtonBTransform, deleteFeedbackColor);
         m_RightButtonBAction.action.canceled += context => OnButtonCanceled(rightButtonBTransform);
 
-        m_leftHomeButtonAction.action.performed += context => OnButtonPerformed(leftHomeButtonTransform, homeFeedbackColor);
+        m_leftHomeButtonAction.action.performed +=
+            context => OnButtonPerformed(leftHomeButtonTransform, homeFeedbackColor);
         m_leftHomeButtonAction.action.canceled += context => OnButtonCanceled(leftHomeButtonTransform);
 
-        m_rightHomeButtonAction.action.performed += context => OnButtonPerformed(rightHomeButtonTransform, homeFeedbackColor);
+        m_rightHomeButtonAction.action.performed +=
+            context => OnButtonPerformed(rightHomeButtonTransform, homeFeedbackColor);
         m_rightHomeButtonAction.action.canceled += context => OnButtonCanceled(rightHomeButtonTransform);
-        
-        m_RightTriggerAction.action.performed += context => OnTriggerPerformed();
-        m_RightTriggerAction.action.canceled += context => OnTriggerCanceled();
+
+        m_RightTriggerAction.action.performed += context => HideSpecificSprites(allSpritesTransforms);
+        m_RightTriggerAction.action.canceled += context => ShowSpecificSprites(allSpritesTransforms);
+
+        m_RightGripAction.action.performed += context => rightGripActionPerformed();
+        m_RightGripAction.action.canceled += context => ShowSpecificSprites(allSpritesTransforms);
     }
 
     private void OnButtonPerformed(Transform buttonTransform, Color feedbackColor)
@@ -128,45 +158,17 @@ public class ButtonsState : MonoBehaviour
         SetButtonColor(buttonTransform, defaultColor);
     }
 
-    private void OnTriggerPerformed()
+    private void rightGripActionPerformed()
     {
-        HideAllSprites();
-    }
-    
-    private void OnTriggerCanceled()
-    {
-        ShowAllSprites();
-    }
-    
-    private void HideAllSprites()
-    {
-        Transform[] allButtonTransforms = {
-            leftButtonATransform,
-            rightButtonATransform,
-            leftButtonBTransform,
-            rightButtonBTransform,
-            rightHomeButtonTransform,
-            leftThumbstickTransform,
-        };
-
-        foreach (var buttonTransform in allButtonTransforms)
+        if (m_Interactor.hasSelection)
         {
-            ToggleChildSprites(buttonTransform, false);
+            HideSpecificSprites(leftButtonATransform, leftButtonBTransform, leftThumbstickTransform);
         }
     }
-
-    private void ShowAllSprites()
+    
+    private void ShowSpecificSprites(params Transform[] buttonTransforms)
     {
-        Transform[] allButtonTransforms = {
-            leftButtonATransform,
-            rightButtonATransform,
-            leftButtonBTransform,
-            rightButtonBTransform,
-            rightHomeButtonTransform,
-            leftThumbstickTransform,
-        };
-
-        foreach (var buttonTransform in allButtonTransforms)
+        foreach (var buttonTransform in buttonTransforms)
         {
             if (buttonTransform != null)
             {
@@ -175,6 +177,17 @@ public class ButtonsState : MonoBehaviour
         }
     }
 
+    private void HideSpecificSprites(params Transform[] buttonTransforms)
+    {
+        foreach (var buttonTransform in buttonTransforms)
+        {
+            if (buttonTransform != null)
+            {
+                ToggleChildSprites(buttonTransform, false);
+            }
+        }
+    }
+    
     private void ToggleChildSprites(Transform parentTransform, bool state)
     {
         foreach (Transform child in parentTransform)
