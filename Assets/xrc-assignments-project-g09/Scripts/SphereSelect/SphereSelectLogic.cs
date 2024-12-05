@@ -282,7 +282,7 @@ public class SphereSelectLogic : MonoBehaviour
                 if (initPos != finalPosition || initRot != finalRotation)
                 {
                     var transformCommand = new TransformCommand(obj.transform, initPos, finalPosition, initRot, finalRotation);
-                    // UndoRedoManager.Instance.ExecuteCommand(transformCommand);
+                    UndoRedoManager.Instance.ExecuteCommand(transformCommand);
                 }
             }
         }

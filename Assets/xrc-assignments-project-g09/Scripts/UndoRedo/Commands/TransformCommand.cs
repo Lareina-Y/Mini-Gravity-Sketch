@@ -24,14 +24,14 @@ namespace UndoRedo.Commands
 
         public void Execute()
         {
-            targetTransform.position = initialPosition;
-            targetTransform.rotation = initialRotation;
+            targetTransform.position = currentPosition;
+            targetTransform.rotation = currentRotation;
         }
 
         public void Undo()
         {
-            targetTransform.position = currentPosition;
-            targetTransform.rotation = currentRotation;
+            targetTransform.position = initialPosition;
+            targetTransform.rotation = initialRotation;
         }
     }
 }
