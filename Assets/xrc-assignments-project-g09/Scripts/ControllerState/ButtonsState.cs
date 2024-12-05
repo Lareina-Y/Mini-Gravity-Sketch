@@ -162,7 +162,7 @@ public class ButtonsState : MonoBehaviour
         m_rightHomeButtonAction.action.canceled += context => OnButtonCanceled(rightHomeButtonTransform);
 
         m_RightTriggerAction.action.performed += context => HideSpecificSprites(allSpritesTransforms);
-        m_RightTriggerAction.action.canceled += context => ShowSpecificSprites(allSpritesTransforms);
+        m_RightTriggerAction.action.canceled += context => RightTriggerActionCanceled();
 
         m_RightGripAction.action.performed += context => RightGripActionPerformed();
         m_RightGripAction.action.canceled += context => RightGripActionCanceled();
@@ -184,6 +184,16 @@ public class ButtonsState : MonoBehaviour
         if (selected)
         {
             HideSpecificSprites(leftThumbstickTransform, leftButtonBTransform, leftButtonATransform);
+            
+            SpriteRenderer[] spriteRenderers = leftButtonBTransform.GetComponentsInChildren<SpriteRenderer>();
+            foreach (SpriteRenderer sr in spriteRenderers)
+            {
+                if (sr.name == "scale")
+                {
+                    sr.enabled = true;
+                    break;
+                }
+            }
         }
     }
 
@@ -192,8 +202,23 @@ public class ButtonsState : MonoBehaviour
         if (!m_RightTriggerAction.action.triggered)
         {
             ShowSpecificSprites(allSpritesTransforms);
+            SpriteRenderer[] spriteRenderers = leftButtonBTransform.GetComponentsInChildren<SpriteRenderer>();
+            foreach (SpriteRenderer sr in spriteRenderers)
+            {
+                if (sr.name == "scale")
+                {
+                    sr.enabled = false;
+                    break;
+                }
+            }
         }
     }
+
+    private void RightTriggerActionCanceled()
+    {
+        ShowSpecificSprites(allSpritesTransforms);
+    }
+    
     
     private void ShowSpecificSprites(params Transform[] buttonTransforms)
     {
@@ -222,7 +247,7 @@ public class ButtonsState : MonoBehaviour
         foreach (Transform child in parentTransform)
         {
             SpriteRenderer spriteRenderer = child.GetComponent<SpriteRenderer>();
-            if (spriteRenderer != null)
+            if (spriteRenderer != null && spriteRenderer.name != "scale")
             {
                 spriteRenderer.enabled = state;
             }
