@@ -1,12 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class ButtonsState : MonoBehaviour
 {
-    
-    [SerializeField]
-    private XRBaseInteractor m_Interactor;
     
     [SerializeField]
     private InputActionProperty m_LeftButtonAAction;
@@ -28,9 +24,6 @@ public class ButtonsState : MonoBehaviour
     
     [SerializeField]
     private InputActionProperty m_RightTriggerAction;
-    
-    [SerializeField]
-    private InputActionProperty m_RightGripAction;
     
     [SerializeField]
     private Transform leftButtonATransform;
@@ -82,7 +75,6 @@ public class ButtonsState : MonoBehaviour
         m_leftHomeButtonAction.action.Enable();
         m_rightHomeButtonAction.action.Enable();
         m_RightTriggerAction.action.Enable();
-        m_RightGripAction.action.Enable();
     }
 
     protected void OnDisable()
@@ -94,7 +86,6 @@ public class ButtonsState : MonoBehaviour
         m_leftHomeButtonAction.action.Disable();
         m_rightHomeButtonAction.action.Disable();
         m_RightTriggerAction.action.Disable();
-        m_RightGripAction.action.Disable();
     }
 
     private void Start()
@@ -143,9 +134,7 @@ public class ButtonsState : MonoBehaviour
 
         m_RightTriggerAction.action.performed += context => HideSpecificSprites(allSpritesTransforms);
         m_RightTriggerAction.action.canceled += context => ShowSpecificSprites(allSpritesTransforms);
-
-        m_RightGripAction.action.performed += context => rightGripActionPerformed();
-        m_RightGripAction.action.canceled += context => ShowSpecificSprites(allSpritesTransforms);
+        
     }
 
     private void OnButtonPerformed(Transform buttonTransform, Color feedbackColor)
@@ -156,14 +145,6 @@ public class ButtonsState : MonoBehaviour
     private void OnButtonCanceled(Transform buttonTransform)
     {
         SetButtonColor(buttonTransform, defaultColor);
-    }
-
-    private void rightGripActionPerformed()
-    {
-        if (m_Interactor.hasSelection)
-        {
-            HideSpecificSprites(leftButtonATransform, leftButtonBTransform, leftThumbstickTransform);
-        }
     }
     
     private void ShowSpecificSprites(params Transform[] buttonTransforms)
