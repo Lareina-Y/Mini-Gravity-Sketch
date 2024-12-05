@@ -1,8 +1,14 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class ButtonsState : MonoBehaviour
 {
+    
+    [SerializeField]
+    private XRBaseInteractor m_Interactor;
     
     [SerializeField]
     private InputActionProperty m_LeftButtonAAction;
@@ -24,6 +30,9 @@ public class ButtonsState : MonoBehaviour
     
     [SerializeField]
     private InputActionProperty m_RightTriggerAction;
+    
+    [SerializeField]
+    private InputActionProperty m_RightGripAction;
     
     [SerializeField]
     private Transform leftButtonATransform;
@@ -65,9 +74,13 @@ public class ButtonsState : MonoBehaviour
     private Color defaultColor = Color.grey;
 
     private Transform[] allSpritesTransforms;
+
+    private bool selected = false;
     
     protected void OnEnable()
     {
+        m_Interactor.selectEntered.AddListener(OnSelectEntered);
+        
         m_LeftButtonAAction.action.Enable();
         m_RightButtonAAction.action.Enable();
         m_LeftButtonBAction.action.Enable();
@@ -75,10 +88,13 @@ public class ButtonsState : MonoBehaviour
         m_leftHomeButtonAction.action.Enable();
         m_rightHomeButtonAction.action.Enable();
         m_RightTriggerAction.action.Enable();
+        m_RightGripAction.action.Enable();
     }
 
     protected void OnDisable()
     {
+        m_Interactor.selectEntered.RemoveListener(OnSelectEntered);
+        
         m_LeftButtonAAction.action.Disable();
         m_RightButtonAAction.action.Disable();
         m_LeftButtonBAction.action.Disable();
@@ -86,6 +102,19 @@ public class ButtonsState : MonoBehaviour
         m_leftHomeButtonAction.action.Disable();
         m_rightHomeButtonAction.action.Disable();
         m_RightTriggerAction.action.Disable();
+        m_RightGripAction.action.Disable();
+    }
+    
+    private void OnSelectEntered(SelectEnterEventArgs eventArgs)
+    {
+        if (eventArgs.interactableObject is IXRSelectInteractable)
+        {
+            selected = true;
+        }
+        else
+        {
+            selected = false;
+        }
     }
 
     private void Start()
@@ -134,7 +163,10 @@ public class ButtonsState : MonoBehaviour
 
         m_RightTriggerAction.action.performed += context => HideSpecificSprites(allSpritesTransforms);
         m_RightTriggerAction.action.canceled += context => ShowSpecificSprites(allSpritesTransforms);
-        
+
+        m_RightGripAction.action.performed += context => RightGripActionPerformed();
+        m_RightGripAction.action.canceled += context => RightGripActionCanceled();
+
     }
 
     private void OnButtonPerformed(Transform buttonTransform, Color feedbackColor)
@@ -145,6 +177,22 @@ public class ButtonsState : MonoBehaviour
     private void OnButtonCanceled(Transform buttonTransform)
     {
         SetButtonColor(buttonTransform, defaultColor);
+    }
+
+    private void RightGripActionPerformed()
+    {
+        if (selected)
+        {
+            HideSpecificSprites(leftThumbstickTransform, leftButtonBTransform, leftButtonATransform);
+        }
+    }
+
+    private void RightGripActionCanceled()
+    {
+        if (!m_RightTriggerAction.action.triggered)
+        {
+            ShowSpecificSprites(allSpritesTransforms);
+        }
     }
     
     private void ShowSpecificSprites(params Transform[] buttonTransforms)
