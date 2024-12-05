@@ -3,12 +3,14 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using System.Collections.Generic;
 
 /// <summary>
 /// Contains the main logic for Color Change.
 /// </summary>
 public class ChangeColorLogic : MonoBehaviour
 {
+
     public static ChangeColorLogic Instance {get; private set;}
 
     public Color Color
@@ -18,6 +20,7 @@ public class ChangeColorLogic : MonoBehaviour
     
     [SerializeField] private XRBaseInteractor m_Interactor;
     [SerializeField] private GameObject m_PointerPrefab;
+    [SerializeField] private SphereSelectLogic m_SphereSelectLogic;
     
     private ColorPanel m_ColorPanel;
     private Color m_Color = Color.white;
@@ -32,6 +35,10 @@ public class ChangeColorLogic : MonoBehaviour
     void Awake()
     {
         m_ColorPanel = GetComponent<ColorPanel>();
+        if (m_SphereSelectLogic == null)
+        {
+            m_SphereSelectLogic = FindFirstObjectByType<SphereSelectLogic>();
+        }
         
         if (Instance != null && Instance != this)
         {
@@ -86,12 +93,22 @@ public class ChangeColorLogic : MonoBehaviour
         if (m_TargetObject != null)
         {
             // Release the object and move to poseOnSelect
-            m_Interactor.interactionManager.SelectExit(m_Interactor, m_Interactor.firstInteractableSelected);
-            m_TargetObject.transform.SetPositionAndRotation(m_AttachPose.position, m_AttachPose.rotation);
-        
+            m_Interactor.interactionManager.SelectExit(m_Interactor, m_Interactor.firstInteractableSelected);        
             m_ColorPanel.SetActive(true);
             m_Pointer.SetActive(true);
             m_IsChanging = true;
+
+            // Get initial transform from SphereSelectLogic
+            var initialTransform = m_SphereSelectLogic.GetInitialTransform(m_TargetObject);
+            if (initialTransform.HasValue)
+            {
+                Vector3 initialPosition = initialTransform.Value.position;
+                Quaternion initialRotation = initialTransform.Value.rotation;
+                
+                // Move object to initial position and rotation
+                m_TargetObject.transform.position = initialPosition;
+                m_TargetObject.transform.rotation = initialRotation;
+            }
         }
     }
 
