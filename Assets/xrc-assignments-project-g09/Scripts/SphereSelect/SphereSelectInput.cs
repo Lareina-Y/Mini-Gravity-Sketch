@@ -3,36 +3,63 @@ using UnityEngine.InputSystem;
 
 public class SphereSelectInput : MonoBehaviour
 {
-    [SerializeField] private float inputSensitivity = 1f;
+    [Header("Input Settings")]
     [SerializeField] private InputActionProperty changeRadius;
+    [SerializeField] private float radiusChangeSpeed = 0.1f;
+    private SphereSelectLogic sphereSelectLogic;
+    private bool isAtDefaultRadius = false;
 
-    private SphereSelectLogic _sphereSelectLogic;
-
-    private void Awake()
+    private void Start()
     {
-        _sphereSelectLogic = GetComponent<SphereSelectLogic>();
-        changeRadius.action.performed += OnRadiusChange;
+        sphereSelectLogic = GetComponent<SphereSelectLogic>();
     }
 
     private void OnEnable()
     {
         changeRadius.action.Enable();
+        changeRadius.action.performed += OnRadiusChange;
+        changeRadius.action.canceled += OnRadiusChangeReleased;
     }
 
     private void OnDisable()
     {
         changeRadius.action.Disable();
+        changeRadius.action.performed -= OnRadiusChange;
+        changeRadius.action.canceled -= OnRadiusChangeReleased;
     }
 
     private void OnRadiusChange(InputAction.CallbackContext context)
     {
-        // Read the input value and adjust the sphere's radius
-        Vector2 axisValue = context.ReadValue<Vector2>();
-        float radiusChange = axisValue.y;
+        Vector2 input = context.ReadValue<Vector2>();
+        float inputY = input.y;
 
-        if (_sphereSelectLogic != null)
+        // If the radius is at the default value, don't change it
+        if (isAtDefaultRadius && Mathf.Approximately(sphereSelectLogic.CurrentRadius, sphereSelectLogic.DefaultRadius))
         {
-            _sphereSelectLogic.AdjustRadius(radiusChange * inputSensitivity * Time.deltaTime);
+            return;
         }
+
+        float currentRadius = sphereSelectLogic.CurrentRadius;
+        float deltaRadius = inputY * radiusChangeSpeed * Time.deltaTime;
+        float newRadius = currentRadius + deltaRadius;
+
+        // If the radius is at the default value, set it to the default value
+        if ((newRadius >= sphereSelectLogic.DefaultRadius && currentRadius < sphereSelectLogic.DefaultRadius) ||
+            (newRadius <= sphereSelectLogic.DefaultRadius && currentRadius > sphereSelectLogic.DefaultRadius))
+        {
+            newRadius = sphereSelectLogic.DefaultRadius;
+            isAtDefaultRadius = true;
+        }
+        else
+        {
+            isAtDefaultRadius = false;
+        }
+
+        sphereSelectLogic.AdjustRadius(newRadius - currentRadius);
+    }
+
+    private void OnRadiusChangeReleased(InputAction.CallbackContext context)
+    {
+        isAtDefaultRadius = false; // Allow the sphere to continue scaling
     }
 }

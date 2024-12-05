@@ -1,0 +1,28 @@
+{
+  "buildFiles": [
+    "E:\\Document\\CT\\VRAR\\Assignment\\p-project-g-09\\Library\\Bee\\Android\\Prj\\IL2CPP\\Gradle\\unityLibrary\\src\\main\\cpp\\CMakeLists.txt",
+    "E:\\Document\\CT\\VRAR\\Assignment\\p-project-g-09\\Library\\Bee\\Android\\Prj\\IL2CPP\\Gradle\\unityLibrary\\src\\main\\cpp\\GameActivity\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "D:\\App\\Unity Hub\\Editor\\6000.0.16f1\\Editor\\Data\\PlaybackEngines\\AndroidPlayer\\SDK\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "E:\\Document\\CT\\VRAR\\Assignment\\p-project-g-09\\.utmp\\RelWithDebInfo\\1r5o2d3g\\arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "D:\\App\\Unity Hub\\Editor\\6000.0.16f1\\Editor\\Data\\PlaybackEngines\\AndroidPlayer\\SDK\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "E:\\Document\\CT\\VRAR\\Assignment\\p-project-g-09\\.utmp\\RelWithDebInfo\\1r5o2d3g\\arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "game::@d02bb112ea9f9c2ed29f": {
+      "artifactName": "game",
+      "abi": "arm64-v8a",
+      "output": "E:\\Document\\CT\\VRAR\\Assignment\\p-project-g-09\\Library\\Bee\\Android\\Prj\\IL2CPP\\Gradle\\unityLibrary\\build\\intermediates\\cxx\\RelWithDebInfo\\1r5o2d3g\\obj\\arm64-v8a\\libgame.so",
+      "runtimeFiles": []
+    }
+  }
+}
