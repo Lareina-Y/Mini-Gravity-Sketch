@@ -2,48 +2,28 @@
     "name": "UndoRedo",
     "maps": [
         {
-            "name": "UndoRedoMaps",
-            "id": "c2bb2112-4d6d-48a8-9d38-00e5c45d13ad",
+            "name": "Undo/Redo",
+            "id": "b4160043-8e21-4d45-abf7-f105ac6833d6",
             "actions": [
                 {
-                    "name": "Undo",
-                    "type": "Button",
-                    "id": "9b755e12-d059-49f3-ac5a-a2fca0c67f0b",
-                    "expectedControlType": "",
+                    "name": "Execute",
+                    "type": "Value",
+                    "id": "db16de03-6f6f-439f-a7ee-0f1fdf2ce096",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Redo",
-                    "type": "Button",
-                    "id": "cfe2a749-a125-44c8-9de7-bbc15d474daf",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
                 {
                     "name": "",
-                    "id": "2b917637-c918-49ea-b3d8-bfb2993ce960",
-                    "path": "<XRController>{LeftHand}/primaryButton",
+                    "id": "78c4e767-1f05-4d36-92b9-49c8d33f4860",
+                    "path": "<XRController>{LeftHand}/thumbstick",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Undo",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "ecc64cba-72ef-4500-b0a0-b19a0226a07d",
-                    "path": "<XRController>{LeftHand}/secondaryButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Redo",
+                    "action": "Execute",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

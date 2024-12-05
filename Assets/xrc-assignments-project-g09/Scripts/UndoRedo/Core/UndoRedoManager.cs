@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 namespace UndoRedo.Core
 {
@@ -25,7 +26,12 @@ namespace UndoRedo.Core
             }
         }
 
-        [SerializeField] private int maxUndoSteps = 50;  // Redo max steps
+        [SerializeField] private int maxUndoSteps = 50;  // Maximum number of undo steps
+        [Header("Input Settings")]
+        [SerializeField] private InputActionProperty undoRedoAction;
+        private bool canTriggerUndoRedo = true;
+        private float undoRedoThreshold = 0.8f; // Threshold for joystick input to trigger undo/redo
+
         private Stack<IUndoRedoCommand> undoStack = new Stack<IUndoRedoCommand>();
         private Stack<IUndoRedoCommand> redoStack = new Stack<IUndoRedoCommand>();
 
@@ -41,6 +47,46 @@ namespace UndoRedo.Core
             }
             instance = this;
             DontDestroyOnLoad(gameObject);
+        }
+
+        private void OnEnable()
+        {
+            undoRedoAction.action.Enable();
+            undoRedoAction.action.performed += OnUndoRedoAction;
+            undoRedoAction.action.canceled += OnUndoRedoReleased;
+        }
+
+        private void OnDisable()
+        {
+            undoRedoAction.action.performed -= OnUndoRedoAction;
+            undoRedoAction.action.canceled -= OnUndoRedoReleased;
+            undoRedoAction.action.Disable();
+        }
+
+        private void OnUndoRedoAction(InputAction.CallbackContext context)
+        {
+            Vector2 input = context.ReadValue<Vector2>();
+            float inputX = input.x;
+
+            // Only trigger when allowed and threshold is reached
+            if (canTriggerUndoRedo)
+            {
+                if (inputX <= -undoRedoThreshold && CanUndo)
+                {
+                    Undo();
+                    canTriggerUndoRedo = false;
+                }
+                else if (inputX >= undoRedoThreshold && CanRedo)
+                {
+                    Redo();
+                    canTriggerUndoRedo = false;
+                }
+            }
+        }
+
+        private void OnUndoRedoReleased(InputAction.CallbackContext context)
+        {
+            canTriggerUndoRedo = true; // Allow new triggers when joystick returns to center
         }
 
         public void ExecuteCommand(IUndoRedoCommand command)

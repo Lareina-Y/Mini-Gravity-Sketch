@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.XR.Interaction.Toolkit.Transformers;
 using UnityEngine.XR.Interaction.Toolkit;
+
 using SetShape;
 
 public class ObjCreator : MonoBehaviour
@@ -17,6 +21,8 @@ public class ObjCreator : MonoBehaviour
     private bool isCreating = false;
 
     private InputAction triggerAction;
+
+    [SerializeField] private UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInteractor m_Interactor;
 
     private void Awake()
     {
@@ -48,9 +54,34 @@ public class ObjCreator : MonoBehaviour
 
     private void StartCreatingObject()
     {
+        // Check if we're currently selecting an object
+        if (m_Interactor.hasSelection)
+        {
+            // Disable grabbing of the original object
+            IXRSelectInteractable currentInteractable = m_Interactor.firstInteractableSelected;
+            m_Interactor.interactionManager.CancelInteractableSelection(currentInteractable);
+
+
+            Debug.Log("Making a duplicate of the currently grabbed object");
+
+            // Make a duplication of the currently grabbed object
+            GameObject currentObject = currentInteractable.transform.gameObject;
+            GameObject duplicatedObject = GameObject.Instantiate(currentObject);
+            SetInteractable(duplicatedObject);
+            IXRSelectInteractable duplicatedInteractable = duplicatedObject.GetComponent<IXRSelectInteractable>();
+
+            // Force the interactor to grab the duplicate object
+            m_Interactor.interactionManager.SelectEnter(m_Interactor, duplicatedInteractable);
+
+            return;
+        }
+
+        // If no object is selected, create a new one (existing creation logic)
         isCreating = true;
 
         GameObject prefabToCreate = setShapeLogic.GetCurrentShapePrefab();
+
+        SetInteractable(prefabToCreate);
 
         if (prefabToCreate == null)
         {
@@ -113,6 +144,11 @@ public class ObjCreator : MonoBehaviour
 
     private void ConfirmObject()
     {
+        if (!isCreating)
+        {
+            return;
+        }
+
         isCreating = false;
 
         if (previewObject != null)
@@ -124,5 +160,37 @@ public class ObjCreator : MonoBehaviour
 
             previewObject = null;
         }
+    }
+
+    private void SetInteractable(GameObject createdObject)
+    {
+        XRGrabInteractable interactable = createdObject.GetComponent<XRGrabInteractable>();
+
+        if (interactable == null)
+        {
+            interactable = createdObject.AddComponent<XRGrabInteractable>();
+        }
+
+        interactable.useDynamicAttach = true;
+        interactable.matchAttachPosition = true;
+        interactable.matchAttachRotation = true;
+        interactable.snapToColliderVolume = false;
+        interactable.throwOnDetach = false;
+
+        // Ensure the XRGeneralGrabTransformer is added to the GameObject, not the interactable
+        XRGeneralGrabTransformer transformer = createdObject.GetComponent<XRGeneralGrabTransformer>();
+        if (transformer == null)
+        {
+            transformer = createdObject.AddComponent<XRGeneralGrabTransformer>();
+        }
+        interactable.AddMultipleGrabTransformer(transformer);
+
+        Rigidbody rb = createdObject.GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = createdObject.AddComponent<Rigidbody>();
+        }
+        rb.isKinematic = true;
+        rb.useGravity = false;
     }
 }

@@ -7,7 +7,6 @@ using MeshManipulation.UI;
 using System.Collections.Generic;
 using UndoRedo.Core;
 using UndoRedo.Commands;
-using UnityEngine.InputSystem;
 
 public class SphereSelectLogic : MonoBehaviour
 {
@@ -26,9 +25,6 @@ public class SphereSelectLogic : MonoBehaviour
     private float currentRadius;
     private Vector3 sphereOffset;
     private MeshSelectionUI.SelectionMode currentMode = MeshSelectionUI.SelectionMode.Object;
-
-    [SerializeField] private InputActionProperty undoAction;
-    [SerializeField] private InputActionProperty redoAction;
 
     private Transform selectedObjectTransform;
     private Vector3 initialPosition;
@@ -298,28 +294,10 @@ public class SphereSelectLogic : MonoBehaviour
 
     private void OnEnable()
     {
-        undoAction.action.Enable();
-        redoAction.action.Enable();
-        undoAction.action.performed += OnUndo;
-        redoAction.action.performed += OnRedo;
     }
 
     private void OnDisable()
     {
-        undoAction.action.performed -= OnUndo;
-        redoAction.action.performed -= OnRedo;
-        undoAction.action.Disable();
-        redoAction.action.Disable();
-    }
-
-    private void OnUndo(InputAction.CallbackContext context)
-    {
-        UndoRedoManager.Instance.Undo();
-    }
-
-    private void OnRedo(InputAction.CallbackContext context)
-    {
-        UndoRedoManager.Instance.Redo();
     }
 
     public (Vector3 position, Quaternion rotation)? GetInitialTransform(GameObject obj)
