@@ -1,0 +1,34 @@
+{
+    "name": "SetShape",
+    "maps": [
+        {
+            "name": "UI",
+            "id": "cfe28fc8-61ac-4a12-a12d-7a7c77f33708",
+            "actions": [
+                {
+                    "name": "ShowMenu",
+                    "type": "Button",
+                    "id": "8e32b085-13e3-412a-9153-624387857166",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a40f9e51-120f-4da7-a770-b4c8e93d4f7f",
+                    "path": "<XRController>{LeftHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ShowMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
