@@ -49,12 +49,6 @@ public class SphereSelectLogic : MonoBehaviour
     public event System.Action<List<MeshRenderer>> OnSelectEnteredEvent;
     public event System.Action<SelectExitEventArgs> OnSelectExitedEvent;
 
-    // Selection Events
-    public event System.Action<GameObject> OnObjectSelected;
-    public event System.Action<int[]> OnVerticesSelected;
-    public event System.Action<int[]> OnEdgesSelected;
-    public event System.Action<int[]> OnFacesSelected;
-
     void Awake()
     {
         if (interactor == null)
@@ -236,13 +230,10 @@ public class SphereSelectLogic : MonoBehaviour
 
         var currentMode = meshManipulationLogic.GetCurrentMode();
         
-        if (currentMode == MeshSelectionUI.SelectionMode.Object)
-        {
-            SelectObjects(colliderWorldPosition);
-        }
+        SelectObjects(colliderWorldPosition, currentMode);
     }
 
-    private void SelectObjects(Vector3 position)
+    private void SelectObjects(Vector3 position, MeshSelectionUI.SelectionMode mode)
     {
         // Use Physics.OverlapSphere to detect objects in range
         Collider[] colliders = Physics.OverlapSphere(position, sphereCollider.radius);
@@ -250,14 +241,21 @@ public class SphereSelectLogic : MonoBehaviour
 
         foreach (Collider collider in colliders)
         {
+
             if (collider.gameObject.TryGetComponent(out MeshRenderer meshRenderer))
             {
                 selectedRenderers.Add(meshRenderer);
-                if (meshManipulationLogic != null)
+                if (meshManipulationLogic != null && mode == MeshSelectionUI.SelectionMode.Object)
                 {
                     meshManipulationLogic.SetSelectedObject(collider.gameObject);
                 }
-                OnObjectSelected?.Invoke(collider.gameObject);
+                // OnObjectSelected?.Invoke(collider.gameObject);
+            }
+
+            if (collider.gameObject.TryGetComponent(out XRBaseInteractable interactable))
+            {   
+                IXRSelectInteractable selectInteractable = (IXRSelectInteractable) interactable;
+                interactor.interactionManager.SelectEnter(interactor, selectInteractable);
             }
         }
 
