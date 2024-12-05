@@ -9,12 +9,18 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 /// </summary>
 public class ChangeColorLogic : MonoBehaviour
 {
+    public static ChangeColorLogic Instance {get; private set;}
+
+    public Color Color
+    {
+        get => m_Color;
+    }
+    
     [SerializeField] private XRBaseInteractor m_Interactor;
     [SerializeField] private GameObject m_PointerPrefab;
-    [SerializeField] private GameObject m_Icon;
     
     private ColorPanel m_ColorPanel;
-    private Color m_Color;
+    private Color m_Color = Color.white;
     private GameObject m_Pointer;
     private Pose m_AttachPose;
     private GameObject m_TargetObject; // TODO: material issue
@@ -22,13 +28,19 @@ public class ChangeColorLogic : MonoBehaviour
     private bool m_IsChanging;
     
     public XRBaseInteractor interactor => m_Interactor;
-    
-    // TODO: All future objects should be in this color
-    public Color color => m_Color;
 
     void Awake()
     {
         m_ColorPanel = GetComponent<ColorPanel>();
+        
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     void OnEnable()

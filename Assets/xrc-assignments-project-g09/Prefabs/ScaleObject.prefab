@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1640634281281577731
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6993544194135138246}
+  - component: {fileID: 1674550334902619831}
+  - component: {fileID: 6847051638640258233}
+  m_Layer: 0
+  m_Name: ScaleObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6993544194135138246
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1640634281281577731}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1674550334902619831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1640634281281577731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1a96849375dabe4b98da2b8678e63a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Interactor: {fileID: 0}
+  m_RightTransform: {fileID: 0}
+  m_XAxisPrefab: {fileID: 7521619217713284138, guid: 0ed016f3439fbfb4fba5a109365b9dc6, type: 3}
+  m_YAxisPrefab: {fileID: 7521619217713284138, guid: e46c6d3e3af52144291a591ad9133313, type: 3}
+  m_ZAxisPrefab: {fileID: 7521619217713284138, guid: 3445cfc5ebfc24c45ba539afa7411cee, type: 3}
+  m_X: 0
+  m_Y: 0
+  m_Z: 0
+--- !u!114 &6847051638640258233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1640634281281577731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 898dd36f2eee84e40899a5ad34153a5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ChangeScale:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Change Scale
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: ce2330ed-57fe-495f-a9c2-953a57c29c9e
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -349643441595735796, guid: ff1874d2d33c9634ca683e469d8b707f, type: 3}
