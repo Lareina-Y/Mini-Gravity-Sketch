@@ -3297,7 +3297,6 @@ GameObject:
   - component: {fileID: 1830817700}
   - component: {fileID: 1830817699}
   - component: {fileID: 1830817698}
-  - component: {fileID: 1830817703}
   m_Layer: 0
   m_Name: Interactable (1)
   m_TagString: Untagged
@@ -3544,23 +3543,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1830817696}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1830817703
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1830817696}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac63356fa9f755842b92a7c9965dd2b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wireframeColor: {r: 1, g: 0, b: 0, a: 1}
-  lineWidth: 0.001
-  lineMaterial: {fileID: 2100000, guid: 53c16fb5d5c516b40a1f6a8fc34132f3, type: 2}
-  showOnStart: 1
-  debugMode: 1
 --- !u!1 &1853363274
 GameObject:
   m_ObjectHideFlags: 0

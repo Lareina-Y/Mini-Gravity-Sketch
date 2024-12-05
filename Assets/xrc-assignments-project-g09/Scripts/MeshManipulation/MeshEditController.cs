@@ -43,6 +43,8 @@ namespace MeshManipulation
 
         private WireframeRenderer wireframeRenderer;
 
+        public event System.Action OnVertexPositionChanged;
+
         public void Initialize()
         {
             if (vertexVisualizerPrefab == null)
@@ -90,9 +92,8 @@ namespace MeshManipulation
             InitializeVertexGroups();
             HideAll();
 
-            // 添加和初始化 WireframeRenderer
-            wireframeRenderer = visualizersContainer.gameObject.AddComponent<WireframeRenderer>();
-            wireframeRenderer.Initialize();
+            wireframeRenderer = gameObject.AddComponent<WireframeRenderer>();
+            wireframeRenderer.Initialize(this);
         }
 
         private void InitializeVertexGroups()
@@ -152,29 +153,24 @@ namespace MeshManipulation
 
         public void ShowForMode(MeshSelectionUI.SelectionMode mode)
         {
-            HideAll();
             
             switch (mode)
             {
+                case MeshSelectionUI.SelectionMode.Object:
+                    HideAll();
+                    break;
                 case MeshSelectionUI.SelectionMode.Vertex:
                     ShowVertices();
+                    ShowWireframe();
                     break;
                 case MeshSelectionUI.SelectionMode.Edge:
                     // TODO: ShowEdges();
+                    ShowWireframe();
                     break;
                 case MeshSelectionUI.SelectionMode.Face:
                     // TODO: ShowFaces();
+                    ShowWireframe();
                     break;
-            }
-
-            // 在任何编辑模式下都显示线框
-            if (mode != MeshSelectionUI.SelectionMode.Object)
-            {
-                wireframeRenderer.SetVisible(true);
-            }
-            else
-            {
-                wireframeRenderer.SetVisible(false);
             }
         }
 
@@ -186,11 +182,21 @@ namespace MeshManipulation
             }
         }
 
+        private void ShowWireframe()
+        {
+            wireframeRenderer.SetVisible(true);
+        }
+
         public void HideAll()
         {
             foreach (var group in vertexGroups)
             {
                 group.Visualizer.SetActive(false);
+            }
+
+            if (wireframeRenderer != null)
+            {
+                wireframeRenderer.SetVisible(false);
             }
         }
 
@@ -202,6 +208,8 @@ namespace MeshManipulation
                 Vector3 worldPosition = visualizer.transform.position;
                 group.Position = transform.InverseTransformPoint(worldPosition); // Convert to local coordinates
                 UpdateMeshVertices(group);
+                
+                OnVertexPositionChanged?.Invoke();
             }
         }
 
@@ -271,6 +279,8 @@ namespace MeshManipulation
             if (!isEditing) return;
 
             isEditing = false;
+
+            ShowForMode(MeshSelectionUI.SelectionMode.Object);
             
             // Use MeshCollider instead of BoxCollider after editing
             if (originalBoxCollider != null)
