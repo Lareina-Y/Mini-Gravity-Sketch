@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
+using SetShape;
 
 public class ObjCreator : MonoBehaviour
 {
-    public GameObject objectPrefab;
+    [SerializeField] private SetShapeLogic setShapeLogic;
     public Transform leftControllerTransform;
     public Transform rightControllerTransform;
     public float minScale = 0.1f;
@@ -27,6 +28,11 @@ public class ObjCreator : MonoBehaviour
         triggerAction.Enable();
     }
 
+    private void Start()
+    {
+        setShapeLogic ??=  Object.FindFirstObjectByType<SetShapeLogic>();
+    }
+
     private void OnDisable()
     {
         triggerAction.Disable();
@@ -44,6 +50,14 @@ public class ObjCreator : MonoBehaviour
     {
         isCreating = true;
 
+        GameObject prefabToCreate = setShapeLogic.GetCurrentShapePrefab();
+
+        if (prefabToCreate == null)
+        {
+            Debug.LogError("Object Creator: No prefab assigned for the current shape!");
+            return;
+        }
+
         // Calculate initial position and scale
         Vector3 midPoint = Vector3.Lerp(leftControllerTransform.position, rightControllerTransform.position, 0.5f);
         float initialDistance = Vector3.Distance(leftControllerTransform.position, rightControllerTransform.position);
@@ -52,7 +66,7 @@ public class ObjCreator : MonoBehaviour
         previousScale = initialScale;
 
         // Create and initialize the preview object
-        previewObject = Instantiate(objectPrefab, midPoint, Quaternion.identity);
+        previewObject = Instantiate(prefabToCreate, midPoint, Quaternion.identity);
         previewObject.transform.localScale = Vector3.one * initialScale;
         previewObject.transform.LookAt(Camera.main.transform);
         previewObject.transform.eulerAngles = new Vector3(0, previewObject.transform.eulerAngles.y, 0);
