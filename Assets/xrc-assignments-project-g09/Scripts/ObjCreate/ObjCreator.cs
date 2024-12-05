@@ -59,10 +59,12 @@ public class ObjCreator : MonoBehaviour
         {
             // Disable grabbing of the original object
             IXRSelectInteractable currentInteractable = m_Interactor.firstInteractableSelected;
+
+            // m_Interactor.interactionManager.CancelInteractableSelection(currentInteractable);
+
+            // // Ensure the original object is no longer selected
+            m_Interactor.interactionManager.SelectExit(m_Interactor, currentInteractable);
             m_Interactor.interactionManager.CancelInteractableSelection(currentInteractable);
-
-
-            Debug.Log("Making a duplicate of the currently grabbed object");
 
             // Make a duplication of the currently grabbed object
             GameObject currentObject = currentInteractable.transform.gameObject;
@@ -70,8 +72,12 @@ public class ObjCreator : MonoBehaviour
             SetInteractable(duplicatedObject);
             IXRSelectInteractable duplicatedInteractable = duplicatedObject.GetComponent<IXRSelectInteractable>();
 
+
+
             // Force the interactor to grab the duplicate object
             m_Interactor.interactionManager.SelectEnter(m_Interactor, duplicatedInteractable);
+            m_Interactor.interactionManager.CancelInteractableSelection(currentInteractable);
+            // m_Interactor.interactionManager.SelectExit(m_Interactor, currentInteractable);
 
             return;
         }
