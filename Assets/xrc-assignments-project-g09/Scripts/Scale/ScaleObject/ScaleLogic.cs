@@ -30,6 +30,7 @@ public class ScaleLogic : MonoBehaviour
     private GameObject m_ZAxis;
 
     private GameObject m_TargetObject;
+    public bool HasGameObject => m_TargetObject != null;
     
     private bool m_IsScaleActive = false;
     public bool IsScaleActive => m_IsScaleActive;
@@ -93,17 +94,13 @@ public class ScaleLogic : MonoBehaviour
             }
         }
     }
+    
 
     private void OnSelectExited(SelectExitEventArgs eventArgs)
     {
         if (eventArgs.interactableObject is IXRSelectInteractable selectInteractable)
-        {
-            if (selectInteractable.transform.gameObject == m_XAxis
-                || selectInteractable.transform.gameObject == m_YAxis
-                || selectInteractable.transform.gameObject == m_ZAxis)
-            {
-                m_ScaleType = ScaleType.None;
-            }
+        { 
+            m_ScaleType = ScaleType.None;
         }
     }
 

@@ -25,13 +25,16 @@ public class ScaleInput : MonoBehaviour
 
     private void OnStartScale(InputAction.CallbackContext context)
     {
-        if (m_ScaleLogic.IsScaleActive)
+        if (m_ScaleLogic.HasGameObject)
         {
-            m_ScaleLogic.EndScale();
-        }
-        else
-        {
-            m_ScaleLogic.StartScale();
+            if (m_ScaleLogic.IsScaleActive)
+            {
+                m_ScaleLogic.EndScale();
+            }
+            else
+            {
+                m_ScaleLogic.StartScale();
+            }
         }
     }
 }
