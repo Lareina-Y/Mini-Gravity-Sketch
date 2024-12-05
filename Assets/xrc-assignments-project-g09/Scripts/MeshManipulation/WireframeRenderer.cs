@@ -40,7 +40,6 @@ public class WireframeRenderer : MonoBehaviour
 
     public void SetVisible(bool visible)
     {
-        Debug.Log("SetVisible: " + visible);
         if (!isInialized) return;
 
         if (visible)
@@ -88,7 +87,6 @@ public class WireframeRenderer : MonoBehaviour
 
     private void CreateWireframe()
     {
-        Debug.Log("Creating wireframe");
         Mesh mesh = meshFilter.sharedMesh;
         int[] triangles = mesh.triangles;
 

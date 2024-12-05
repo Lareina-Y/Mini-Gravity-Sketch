@@ -8,7 +8,7 @@ namespace MeshManipulation
     {
         [SerializeField] private MeshSelectionUI selectionUI;
         [SerializeField] private float menuDistance = 0.3f;
-        [SerializeField] private UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor rayInteractor;
+        [SerializeField] private GameObject rayInteractorObject;
 
         [Header("Material Settings")]
         [SerializeField] private Material editModeMaterial;
@@ -16,6 +16,8 @@ namespace MeshManipulation
         private Camera mainCamera;
         private Dictionary<GameObject, Material> originalMaterials = new Dictionary<GameObject, Material>();
         private MeshManipulationLogic meshManipulationLogic;
+        private UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor rayInteractor;
+        private LineRenderer rayLineRenderer;
 
         private void Start()
         {
@@ -34,9 +36,14 @@ namespace MeshManipulation
                 input.OnMenuHideRequest += HandleMenuHide;
             }
 
-            if (rayInteractor == null)
+            if (rayInteractorObject == null)
             {
-                Debug.LogError("RayInteractor is not assigned!");
+                Debug.LogError("RayInteractorObject is not assigned!");
+            }
+            else
+            {
+                rayInteractor = rayInteractorObject.GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor>();
+                rayLineRenderer = rayInteractorObject.GetComponent<LineRenderer>();
             }
 
             if (editModeMaterial == null)
@@ -83,6 +90,9 @@ namespace MeshManipulation
         {
             if (rayInteractor == null) return;
 
+            // Enable ray
+            rayInteractorObject.SetActive(true);
+
             Vector3 rayOrigin = rayInteractor.transform.position;
             Vector3 rayDirection = rayInteractor.transform.forward;
             
@@ -98,6 +108,9 @@ namespace MeshManipulation
 
         private void HandleMenuHide(Vector3 position)
         {
+            // Disable ray
+            rayInteractorObject.SetActive(false);
+
             if (selectionUI.TryGetHoveredMode(out MeshSelectionUI.SelectionMode hoveredMode))
             {
                 var logic = GetComponent<MeshManipulationLogic>();

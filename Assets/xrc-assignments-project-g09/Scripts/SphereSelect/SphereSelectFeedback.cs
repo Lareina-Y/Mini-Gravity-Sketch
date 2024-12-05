@@ -160,8 +160,6 @@ public class SphereSelectFeedback : MonoBehaviour
             sphereMaterial.SetColor("_BaseColor", sphereNormalColor);
         }
 
-        Debug.Log($"Hover exited: {args.interactableObject}");
-
         var hoverInteractable = (UnityEngine.XR.Interaction.Toolkit.Interactables.IXRHoverInteractable)args.interactableObject;
         if (hoverInteractable.transform.TryGetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>(out var grabInteractable))
         {
@@ -175,13 +173,8 @@ public class SphereSelectFeedback : MonoBehaviour
             {
                 if (!selectedRenderers.Contains(meshRenderer))
                 {
-                    Debug.Log("Restoring material");
                     RestoreMaterials(meshRenderer);
                 }
-            }
-            else
-            {
-                Debug.Log("Not a select layer");
             }
         }
     }
