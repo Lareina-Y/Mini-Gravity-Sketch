@@ -1301,12 +1301,25 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 6870224474926447978, guid: 60490301e76fe4aff9550752f40d34dc, type: 3}
-  leftButtonARenderer: {fileID: 645029249580137721}
-  leftButtonBRenderer: {fileID: 3935667659670031848}
-  rightButtonARenderer: {fileID: 7672608320687196967}
-  rightButtonBRenderer: {fileID: 6059385289016719926}
-  leftHomeButtonRenderer: {fileID: 1991149223865732753}
-  rightHomeButtonRenderer: {fileID: 8730497919213271375}
+  m_RightTriggerAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Right Trigger
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 0af40719-6ca3-4426-8119-4395c704fab9
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -220771882412347733, guid: 60490301e76fe4aff9550752f40d34dc, type: 3}
+  leftButtonATransform: {fileID: 7513112850776061254}
+  leftButtonBTransform: {fileID: 8050338879307389405}
+  rightButtonATransform: {fileID: 777713601700709016}
+  rightButtonBTransform: {fileID: 950684742248017411}
+  leftHomeButtonTransform: {fileID: 4622949848303341743}
+  rightHomeButtonTransform: {fileID: 2495287034485188465}
+  leftThumbstickTransform: {fileID: 4179215072786824366}
   deleteFeedbackColor: {r: 1, g: 0, b: 0, a: 1}
   menuFeedbackColor: {r: 0, g: 0, b: 1, a: 1}
   drawFeedbackColor: {r: 1, g: 0, b: 1, a: 1}

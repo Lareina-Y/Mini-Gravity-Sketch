@@ -1,64 +1,68 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 public class ButtonsState : MonoBehaviour
 {
     [SerializeField]
     private InputActionProperty m_LeftButtonAAction;
-    
+
     [SerializeField]
     private InputActionProperty m_LeftButtonBAction;
-    
+
     [SerializeField]
     private InputActionProperty m_RightButtonAAction;
-    
+
     [SerializeField]
     private InputActionProperty m_RightButtonBAction;
-    
+
     [SerializeField]
     private InputActionProperty m_leftHomeButtonAction;
-    
+
     [SerializeField]
     private InputActionProperty m_rightHomeButtonAction;
     
     [SerializeField]
-    private Renderer leftButtonARenderer;
+    private InputActionProperty m_RightTriggerAction;
     
     [SerializeField]
-    private Renderer leftButtonBRenderer;
-    
+    private Transform leftButtonATransform;
+
     [SerializeField]
-    private Renderer rightButtonARenderer;
-    
+    private Transform leftButtonBTransform;
+
     [SerializeField]
-    private Renderer rightButtonBRenderer;
-    
+    private Transform rightButtonATransform;
+
     [SerializeField]
-    private Renderer leftHomeButtonRenderer;
-    
+    private Transform rightButtonBTransform;
+
     [SerializeField]
-    private Renderer rightHomeButtonRenderer;
+    private Transform leftHomeButtonTransform;
+
+    [SerializeField]
+    private Transform rightHomeButtonTransform;
+
+    [SerializeField]
+    private Transform leftThumbstickTransform;
     
     [SerializeField]
     private Color deleteFeedbackColor = Color.red;
-    
+
     [SerializeField]
     private Color menuFeedbackColor = Color.blue;
-    
+
     [SerializeField]
     private Color drawFeedbackColor = Color.magenta;
-    
+
     [SerializeField]
     private Color colorPlateFeedbackColor = Color.cyan;
-    
+
     [SerializeField]
     private Color homeFeedbackColor = Color.black;
-    
-    [SerializeField]
-    private Color defaultColor = Color.grey; // Default color
 
-    // Enable the input action
+    [SerializeField]
+    private Color defaultColor = Color.grey;
+
     protected void OnEnable()
     {
         m_LeftButtonAAction.action.Enable();
@@ -67,9 +71,9 @@ public class ButtonsState : MonoBehaviour
         m_RightButtonBAction.action.Enable();
         m_leftHomeButtonAction.action.Enable();
         m_rightHomeButtonAction.action.Enable();
+        m_RightTriggerAction.action.Enable();
     }
 
-    // Disable the input action
     protected void OnDisable()
     {
         m_LeftButtonAAction.action.Disable();
@@ -78,55 +82,117 @@ public class ButtonsState : MonoBehaviour
         m_RightButtonBAction.action.Disable();
         m_leftHomeButtonAction.action.Disable();
         m_rightHomeButtonAction.action.Disable();
+        m_RightTriggerAction.action.Disable();
     }
-    
+
     private void Start()
     {
-        // Set the default color on start
-        SetRendererColor(leftButtonARenderer, defaultColor);
-        SetRendererColor(rightButtonARenderer, defaultColor);
-        SetRendererColor(leftButtonBRenderer, defaultColor);
-        SetRendererColor(rightButtonBRenderer, defaultColor);
-        SetRendererColor(leftHomeButtonRenderer, defaultColor);
-        SetRendererColor(rightHomeButtonRenderer, defaultColor);
+        // Initialize all button colors
+        SetButtonColor(leftButtonATransform, defaultColor);
+        SetButtonColor(rightButtonATransform, defaultColor);
+        SetButtonColor(leftButtonBTransform, defaultColor);
+        SetButtonColor(rightButtonBTransform, defaultColor);
+        SetButtonColor(leftHomeButtonTransform, defaultColor);
+        SetButtonColor(rightHomeButtonTransform, defaultColor);
 
-        // Listen for button input events
-        m_LeftButtonAAction.action.performed += context => OnButtonPerformed(leftButtonARenderer, drawFeedbackColor);
-        m_LeftButtonAAction.action.canceled += context => OnButtonCanceled(leftButtonARenderer);
+        // Attach input event listeners
+        m_LeftButtonAAction.action.performed += context => OnButtonPerformed(leftButtonATransform, drawFeedbackColor);
+        m_LeftButtonAAction.action.canceled += context => OnButtonCanceled(leftButtonATransform);
 
-        m_RightButtonAAction.action.performed += context => OnButtonPerformed(rightButtonARenderer, colorPlateFeedbackColor);
-        m_RightButtonAAction.action.canceled += context => OnButtonCanceled(rightButtonARenderer);
+        m_RightButtonAAction.action.performed += context => OnButtonPerformed(rightButtonATransform, colorPlateFeedbackColor);
+        m_RightButtonAAction.action.canceled += context => OnButtonCanceled(rightButtonATransform);
 
-        m_LeftButtonBAction.action.performed += context => OnButtonPerformed(leftButtonBRenderer, menuFeedbackColor);
-        m_LeftButtonBAction.action.canceled += context => OnButtonCanceled(leftButtonBRenderer);
+        m_LeftButtonBAction.action.performed += context => OnButtonPerformed(leftButtonBTransform, menuFeedbackColor);
+        m_LeftButtonBAction.action.canceled += context => OnButtonCanceled(leftButtonBTransform);
 
-        m_RightButtonBAction.action.performed += context => OnButtonPerformed(rightButtonBRenderer, deleteFeedbackColor);
-        m_RightButtonBAction.action.canceled += context => OnButtonCanceled(rightButtonBRenderer);
+        m_RightButtonBAction.action.performed += context => OnButtonPerformed(rightButtonBTransform, deleteFeedbackColor);
+        m_RightButtonBAction.action.canceled += context => OnButtonCanceled(rightButtonBTransform);
+
+        m_leftHomeButtonAction.action.performed += context => OnButtonPerformed(leftHomeButtonTransform, homeFeedbackColor);
+        m_leftHomeButtonAction.action.canceled += context => OnButtonCanceled(leftHomeButtonTransform);
+
+        m_rightHomeButtonAction.action.performed += context => OnButtonPerformed(rightHomeButtonTransform, homeFeedbackColor);
+        m_rightHomeButtonAction.action.canceled += context => OnButtonCanceled(rightHomeButtonTransform);
         
-        m_leftHomeButtonAction.action.performed += context => OnButtonPerformed(leftHomeButtonRenderer, homeFeedbackColor);
-        m_leftHomeButtonAction.action.canceled += context => OnButtonCanceled(leftHomeButtonRenderer);
-        
-        m_rightHomeButtonAction.action.performed += context => OnButtonPerformed(rightHomeButtonRenderer, homeFeedbackColor);
-        m_rightHomeButtonAction.action.canceled += context => OnButtonCanceled(rightHomeButtonRenderer);
-        
+        m_RightTriggerAction.action.performed += context => OnTriggerPerformed();
+        m_RightTriggerAction.action.canceled += context => OnTriggerCanceled();
     }
 
-    private void OnButtonPerformed(Renderer buttonRenderer, Color feedbackColor)
+    private void OnButtonPerformed(Transform buttonTransform, Color feedbackColor)
     {
-        SetRendererColor(buttonRenderer, feedbackColor);
+        SetButtonColor(buttonTransform, feedbackColor);
     }
 
-    private void OnButtonCanceled(Renderer buttonRenderer)
+    private void OnButtonCanceled(Transform buttonTransform)
     {
-        SetRendererColor(buttonRenderer, defaultColor);
+        SetButtonColor(buttonTransform, defaultColor);
     }
 
-    private void SetRendererColor(Renderer buttonRenderer, Color color)
+    private void OnTriggerPerformed()
     {
-        if (buttonRenderer != null)
+        HideAllSprites();
+    }
+    
+    private void OnTriggerCanceled()
+    {
+        ShowAllSprites();
+    }
+    
+    private void HideAllSprites()
+    {
+        Transform[] allButtonTransforms = {
+            leftButtonATransform,
+            rightButtonATransform,
+            leftButtonBTransform,
+            rightButtonBTransform,
+            rightHomeButtonTransform,
+            leftThumbstickTransform,
+        };
+
+        foreach (var buttonTransform in allButtonTransforms)
         {
-            buttonRenderer.material.color = color;
+            ToggleChildSprites(buttonTransform, false);
         }
     }
 
+    private void ShowAllSprites()
+    {
+        Transform[] allButtonTransforms = {
+            leftButtonATransform,
+            rightButtonATransform,
+            leftButtonBTransform,
+            rightButtonBTransform,
+            rightHomeButtonTransform,
+            leftThumbstickTransform,
+        };
+
+        foreach (var buttonTransform in allButtonTransforms)
+        {
+            if (buttonTransform != null)
+            {
+                ToggleChildSprites(buttonTransform, true);
+            }
+        }
+    }
+
+    private void ToggleChildSprites(Transform parentTransform, bool state)
+    {
+        foreach (Transform child in parentTransform)
+        {
+            SpriteRenderer spriteRenderer = child.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.enabled = state;
+            }
+        }
+    }
+
+    private void SetButtonColor(Transform buttonTransform, Color color)
+    {
+        Renderer renderer = buttonTransform.GetComponent<Renderer>();
+        if (renderer != null)
+        {
+            renderer.material.color = color;
+        }
+    }
 }
