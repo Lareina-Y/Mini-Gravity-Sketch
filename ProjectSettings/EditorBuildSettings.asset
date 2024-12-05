@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/xrc-assignments-project-g09/Scenes/TestScenes/ControllerStateTest.unity
-    guid: 56fe5978e1aa8427aa0ced01023a02e0
+    path: Assets/xrc-assignments-project-g09/Scenes/Project-G09.unity
+    guid: 7e172503e4779c94f882ac3737002856
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260, type: 2}
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: dc5a169419fa04987b057f65238cf3ba, type: 2}
