@@ -118,6 +118,8 @@ public class ObjCreator : MonoBehaviour
         if (previewObject != null)
         {
             // Make the object fully opaque
+            Color currColor = ChangeColorLogic.Instance.Color;
+            
             previewObject.GetComponent<MeshRenderer>().material.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 
             previewObject = null;
