@@ -79,7 +79,7 @@ public class ColorPanel : MonoBehaviour
         Canvas canvas = m_ColorWheel.GetComponent<Canvas>();
         Rect rect = RectTransformUtility.PixelAdjustRect(m_ColorWheel.rectTransform, canvas);
         
-        int wheelTextureSize = Mathf.FloorToInt(Mathf.Min(rect.width, rect.height));
+        int wheelTextureSize = 5 * Mathf.FloorToInt(Mathf.Min(rect.width, rect.height));
         
         Texture2D wheelTexture = new Texture2D(wheelTextureSize, wheelTextureSize, TextureFormat.RGBA32, false);
 
