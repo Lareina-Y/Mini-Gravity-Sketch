@@ -74,8 +74,6 @@ public class ButtonsState : MonoBehaviour
     private Color defaultColor = Color.grey;
 
     private Transform[] allSpritesTransforms;
-
-    private bool selected = false;
     
     protected void OnEnable()
     {
@@ -109,11 +107,17 @@ public class ButtonsState : MonoBehaviour
     {
         if (eventArgs.interactableObject is IXRSelectInteractable)
         {
-            selected = true;
-        }
-        else
-        {
-            selected = false;
+            HideSpecificSprites(leftThumbstickTransform, leftButtonBTransform, leftButtonATransform);
+            
+            SpriteRenderer[] spriteRenderers = leftButtonBTransform.GetComponentsInChildren<SpriteRenderer>();
+            foreach (SpriteRenderer sr in spriteRenderers)
+            {
+                if (sr.name == "scale")
+                {
+                    sr.enabled = true;
+                    break;
+                }
+            }
         }
     }
 
@@ -179,23 +183,7 @@ public class ButtonsState : MonoBehaviour
         SetButtonColor(buttonTransform, defaultColor);
     }
 
-    private void RightGripActionPerformed()
-    {
-        if (selected)
-        {
-            HideSpecificSprites(leftThumbstickTransform, leftButtonBTransform, leftButtonATransform);
-            
-            SpriteRenderer[] spriteRenderers = leftButtonBTransform.GetComponentsInChildren<SpriteRenderer>();
-            foreach (SpriteRenderer sr in spriteRenderers)
-            {
-                if (sr.name == "scale")
-                {
-                    sr.enabled = true;
-                    break;
-                }
-            }
-        }
-    }
+    private void RightGripActionPerformed() {}
 
     private void RightGripActionCanceled()
     {
