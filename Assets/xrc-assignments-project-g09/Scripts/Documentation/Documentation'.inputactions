@@ -1,0 +1,34 @@
+{
+    "name": "Documentation'",
+    "maps": [
+        {
+            "name": "Documentation",
+            "id": "a865f79b-0a85-454d-b4e4-b8d39e1b0cbb",
+            "actions": [
+                {
+                    "name": "Documentation",
+                    "type": "Button",
+                    "id": "84669207-6f0a-427a-b2d4-1d94bd494953",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "628a3b2e-8df0-4ca3-ba59-b6a3a76f1c5e",
+                    "path": "<XRController>{LeftHand}/{MenuButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Documentation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
