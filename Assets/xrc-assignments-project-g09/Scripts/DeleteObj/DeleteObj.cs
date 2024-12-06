@@ -53,8 +53,25 @@ public class DeleteObj : MonoBehaviour
         {
             GameObject selectedObject = interactable.transform.gameObject;
             
-            var deleteCommand = new DeleteObjectCommand(selectedObject);
-            UndoRedoManager.Instance.ExecuteCommand(deleteCommand);
+            // Get initial transform
+            var sphereSelect = FindFirstObjectByType<SphereSelectLogic>();
+            var initialTransform = sphereSelect.GetInitialTransform(selectedObject);
+            
+            // If initial transform is found, use it to create delete command
+            if (initialTransform.HasValue)
+            {
+                var deleteCommand = new DeleteObjectCommand(
+                    selectedObject, 
+                    initialTransform.Value.position,
+                    initialTransform.Value.rotation);
+                UndoRedoManager.Instance.ExecuteCommand(deleteCommand);
+            }
+            else
+            {
+                // If initial transform is not found, use current transform
+                var deleteCommand = new DeleteObjectCommand(selectedObject);
+                UndoRedoManager.Instance.ExecuteCommand(deleteCommand);
+            }
         }
     }
 }

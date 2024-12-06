@@ -20,6 +20,14 @@ namespace UndoRedo.Commands
             this.scale = obj.transform.localScale;
         }
 
+        public DeleteObjectCommand(GameObject obj, Vector3 initialPosition, Quaternion initialRotation)
+        {
+            this.deletedObject = obj;
+            this.position = initialPosition;
+            this.rotation = initialRotation;
+            this.scale = obj.transform.localScale;
+        }
+
         public void Execute()
         {
             if (deletedObject != null)

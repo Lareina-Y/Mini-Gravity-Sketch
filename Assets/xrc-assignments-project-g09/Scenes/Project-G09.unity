@@ -4464,7 +4464,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxUndoSteps: 50
   undoRedoAction:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
       m_Name: Undo Redo
       m_Type: 0
@@ -4474,7 +4474,8 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: -8872450445490311326, guid: 69d9fa930336c7047912a23f2489aabc, type: 3}
+  undoRedoThreshold: 0.6
 --- !u!1 &1851373560
 GameObject:
   m_ObjectHideFlags: 0
