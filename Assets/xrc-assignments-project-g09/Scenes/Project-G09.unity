@@ -278,6 +278,8 @@ MonoBehaviour:
   minScale: 0.1
   maxScale: 5
   scaleThreshold: 0.02
+  previewMaterial: {fileID: 2100000, guid: 8def861a73beac849b1ac3b1e3f2ca3f, type: 2}
+  defaultMaterial: {fileID: 2100000, guid: 537277d2382ccbf449b4bd18c759f052, type: 2}
   m_Interactor: {fileID: 1070521584}
 --- !u!4 &389515927
 Transform:

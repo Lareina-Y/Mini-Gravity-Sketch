@@ -18,6 +18,9 @@ public class ObjCreator : MonoBehaviour
     public float maxScale = 5f;
     private float previousScale;
     public float scaleThreshold = 0.01f; // 1cm threshold
+    
+    [SerializeField] private Material previewMaterial;
+    [SerializeField] private Material defaultMaterial;
 
     private GameObject previewObject;
     private bool isCreating = false;
@@ -111,6 +114,7 @@ public class ObjCreator : MonoBehaviour
 
 
         // Make the preview object transparent
+        previewObject.GetComponent<MeshRenderer>().material = previewMaterial;
         previewObject.GetComponent<MeshRenderer>().material.color = new Color(1.0f, 1.0f, 1.0f, 0.75f);
     }
 
@@ -162,6 +166,7 @@ public class ObjCreator : MonoBehaviour
         {
             // Make the object fully opaque
             Color currColor = ChangeColorLogic.Instance.Color;
+            previewObject.GetComponent<MeshRenderer>().material = defaultMaterial;
             previewObject.GetComponent<MeshRenderer>().material.color = currColor;
 
             // Create and execute create command
