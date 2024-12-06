@@ -1,47 +1,50 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Handles the user input.
-/// </summary>
-public class GrabMoveInput : MonoBehaviour
+namespace XRC.Assignments.Project.G09
 {
-    // TODO: Double check input action property setting: one binding / button one binding
-    [SerializeField] InputActionProperty m_GrabMoveAction;
-    [SerializeField] InputActionProperty m_GrabMoveResetAction;
-    
-    void OnEnable()
+    /// <summary>
+    /// Handles the user input.
+    /// </summary>
+    public class GrabMoveInput : MonoBehaviour
     {
-        m_GrabMoveAction.action.Enable();
-        m_GrabMoveResetAction.action.Enable();
-    }
+        // TODO: Double check input action property setting: one binding / button one binding
+        [SerializeField] InputActionProperty m_GrabMoveAction;
+        [SerializeField] InputActionProperty m_GrabMoveResetAction;
 
-    void OnDisable()
-    {
-        m_GrabMoveAction.action.Disable();
-        m_GrabMoveResetAction.action.Disable();
-    }
+        void OnEnable()
+        {
+            m_GrabMoveAction.action.Enable();
+            m_GrabMoveResetAction.action.Enable();
+        }
 
-    void Start()
-    {
-        m_GrabMoveAction.action.performed += StartGrabMove;
-        m_GrabMoveAction.action.canceled += StopGrabMove;
-        m_GrabMoveResetAction.action.performed += ResetGrabMove;
-    }
+        void OnDisable()
+        {
+            m_GrabMoveAction.action.Disable();
+            m_GrabMoveResetAction.action.Disable();
+        }
 
-    private void StartGrabMove(InputAction.CallbackContext context)
-    {
-        GetComponent<GrabMoveLogic>().StartGrabMove();
-    }
+        void Start()
+        {
+            m_GrabMoveAction.action.performed += StartGrabMove;
+            m_GrabMoveAction.action.canceled += StopGrabMove;
+            m_GrabMoveResetAction.action.performed += ResetGrabMove;
+        }
 
-    private void StopGrabMove(InputAction.CallbackContext context)
-    {
-        GetComponent<GrabMoveLogic>().EndGrabMove();
-    }
+        private void StartGrabMove(InputAction.CallbackContext context)
+        {
+            GetComponent<GrabMoveLogic>().StartGrabMove();
+        }
 
-    private void ResetGrabMove(InputAction.CallbackContext context)
-    {
-        // TODO: Find out what to reset
-        Debug.Log("ResetGrabMove");
+        private void StopGrabMove(InputAction.CallbackContext context)
+        {
+            GetComponent<GrabMoveLogic>().EndGrabMove();
+        }
+
+        private void ResetGrabMove(InputAction.CallbackContext context)
+        {
+            // TODO: Find out what to reset
+            Debug.Log("ResetGrabMove");
+        }
     }
 }

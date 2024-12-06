@@ -1,37 +1,41 @@
 using UnityEngine;
-using UndoRedo.Core;
 
-namespace UndoRedo.Commands
+namespace XRC.Assignments.Project.G09
 {
-    public class ScaleCommand : IUndoRedoCommand
+    using UndoRedo.Core;
+
+    namespace UndoRedo.Commands
     {
-        private Transform targetTransform;
-        private Vector3 initialScale;
-        private Vector3 finalScale;
-
-        public string CommandName => "Scale Object";
-
-        public ScaleCommand(Transform transform, Vector3 initialScale, Vector3 finalScale)
+        public class ScaleCommand : IUndoRedoCommand
         {
-            this.targetTransform = transform;
-            this.initialScale = initialScale;
-            this.finalScale = finalScale;
-        }
+            private Transform targetTransform;
+            private Vector3 initialScale;
+            private Vector3 finalScale;
 
-        public void Execute()
-        {
-            if (targetTransform != null)
+            public string CommandName => "Scale Object";
+
+            public ScaleCommand(Transform transform, Vector3 initialScale, Vector3 finalScale)
             {
-                targetTransform.localScale = finalScale;
+                this.targetTransform = transform;
+                this.initialScale = initialScale;
+                this.finalScale = finalScale;
             }
-        }
 
-        public void Undo()
-        {
-            if (targetTransform != null)
+            public void Execute()
             {
-                targetTransform.localScale = initialScale;
+                if (targetTransform != null)
+                {
+                    targetTransform.localScale = finalScale;
+                }
+            }
+
+            public void Undo()
+            {
+                if (targetTransform != null)
+                {
+                    targetTransform.localScale = initialScale;
+                }
             }
         }
     }
-} 
+}

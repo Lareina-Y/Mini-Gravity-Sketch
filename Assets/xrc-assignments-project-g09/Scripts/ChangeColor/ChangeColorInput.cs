@@ -1,40 +1,43 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Change color is triggered by pressing Primary when selecting an item, exit by release the primary button.
-/// TODO: trigger logic
-/// </summary>
-public class ChangeColorInput : MonoBehaviour
+namespace XRC.Assignments.Project.G09
 {
-    [SerializeField] private InputActionProperty m_ChangeColor;
-
-    private ChangeColorLogic m_ChangeColorLogic;
-    
-    void Awake()
+    /// <summary>
+    /// Change color is triggered by pressing Primary when selecting an item, exit by release the primary button.
+    /// TODO: trigger logic
+    /// </summary>
+    public class ChangeColorInput : MonoBehaviour
     {
-        m_ChangeColorLogic = GetComponent<ChangeColorLogic>();
-        m_ChangeColor.action.performed += OnStartColorChange;
-        m_ChangeColor.action.canceled += OnEndColorChange;
-    }
+        [SerializeField] private InputActionProperty m_ChangeColor;
 
-    void OnEnable()
-    {
-        m_ChangeColor.action.Enable();
-    }
+        private ChangeColorLogic m_ChangeColorLogic;
 
-    void OnDisable()
-    {
-        m_ChangeColor.action.Disable();
-    }
+        void Awake()
+        {
+            m_ChangeColorLogic = GetComponent<ChangeColorLogic>();
+            m_ChangeColor.action.performed += OnStartColorChange;
+            m_ChangeColor.action.canceled += OnEndColorChange;
+        }
 
-    private void OnStartColorChange(InputAction.CallbackContext context)
-    {
-        m_ChangeColorLogic.ChangeColor();
-    }
+        void OnEnable()
+        {
+            m_ChangeColor.action.Enable();
+        }
 
-    private void OnEndColorChange(InputAction.CallbackContext context)
-    {
-        m_ChangeColorLogic.EndChangeColor();
+        void OnDisable()
+        {
+            m_ChangeColor.action.Disable();
+        }
+
+        private void OnStartColorChange(InputAction.CallbackContext context)
+        {
+            m_ChangeColorLogic.ChangeColor();
+        }
+
+        private void OnEndColorChange(InputAction.CallbackContext context)
+        {
+            m_ChangeColorLogic.EndChangeColor();
+        }
     }
 }

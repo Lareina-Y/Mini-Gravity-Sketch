@@ -1,9 +1,12 @@
-namespace UndoRedo.Core
+namespace XRC.Assignments.Project.G09
 {
-    public interface IUndoRedoCommand
+    namespace UndoRedo.Core
     {
-        string CommandName { get; }
-        void Execute();
-        void Undo();
+        public interface IUndoRedoCommand
+        {
+            string CommandName { get; }
+            void Execute();
+            void Undo();
+        }
     }
 }

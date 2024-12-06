@@ -1,39 +1,42 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class ScaleInput : MonoBehaviour
+namespace XRC.Assignments.Project.G09
 {
-    [SerializeField] private InputActionProperty m_ChangeScale;
-
-    private ScaleLogic m_ScaleLogic;
-    
-    void Awake()
+    public class ScaleInput : MonoBehaviour
     {
-        m_ScaleLogic = GetComponent<ScaleLogic>();
-        m_ChangeScale.action.performed += OnStartScale;
-    }
+        [SerializeField] private InputActionProperty m_ChangeScale;
 
-    void OnEnable()
-    {
-        m_ChangeScale.action.Enable();
-    }
+        private ScaleLogic m_ScaleLogic;
 
-    void OnDisable()
-    {
-        m_ChangeScale.action.Disable();
-    }
-
-    private void OnStartScale(InputAction.CallbackContext context)
-    {
-        if (m_ScaleLogic.HasGameObject)
+        void Awake()
         {
-            if (m_ScaleLogic.IsScaleActive)
+            m_ScaleLogic = GetComponent<ScaleLogic>();
+            m_ChangeScale.action.performed += OnStartScale;
+        }
+
+        void OnEnable()
+        {
+            m_ChangeScale.action.Enable();
+        }
+
+        void OnDisable()
+        {
+            m_ChangeScale.action.Disable();
+        }
+
+        private void OnStartScale(InputAction.CallbackContext context)
+        {
+            if (m_ScaleLogic.HasGameObject)
             {
-                m_ScaleLogic.EndScale();
-            }
-            else
-            {
-                m_ScaleLogic.StartScale();
+                if (m_ScaleLogic.IsScaleActive)
+                {
+                    m_ScaleLogic.EndScale();
+                }
+                else
+                {
+                    m_ScaleLogic.StartScale();
+                }
             }
         }
     }

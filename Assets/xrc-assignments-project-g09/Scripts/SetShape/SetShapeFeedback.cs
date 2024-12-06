@@ -1,78 +1,83 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
-namespace SetShape
+namespace XRC.Assignments.Project.G09
 {
-    public class SetShapeFeedback : MonoBehaviour
+    namespace SetShape
     {
-        [SerializeField] private float menuDistance = 0.3f;
-
-        [SerializeField] private GameObject rayInteractorObject;
-
-        private XRRayInteractor rayInteractor;
-        private LineRenderer rayLineRenderer;
-
-        private SetShapeUI shapeUI;
-        private Camera mainCamera;
-        private SetShapeLogic setShapeLogic;
-
-        private void Start()
+        public class SetShapeFeedback : MonoBehaviour
         {
-            mainCamera = Camera.main;
-            
-            setShapeLogic = GetComponent<SetShapeLogic>();
-            shapeUI = GetComponent<SetShapeUI>();
+            [SerializeField] private float menuDistance = 0.3f;
 
-            var input = GetComponent<SetShapeInput>();
-            if (input != null)
+            [SerializeField] private GameObject rayInteractorObject;
+
+            private XRRayInteractor rayInteractor;
+            private LineRenderer rayLineRenderer;
+
+            private SetShapeUI shapeUI;
+            private Camera mainCamera;
+            private SetShapeLogic setShapeLogic;
+
+            private void Start()
             {
-                input.OnMenuShowRequest += HandleMenuShow;
-                input.OnMenuHideRequest += HandleMenuHide;
+                mainCamera = Camera.main;
+
+                setShapeLogic = GetComponent<SetShapeLogic>();
+                shapeUI = GetComponent<SetShapeUI>();
+
+                var input = GetComponent<SetShapeInput>();
+                if (input != null)
+                {
+                    input.OnMenuShowRequest += HandleMenuShow;
+                    input.OnMenuHideRequest += HandleMenuHide;
+                }
+
+                if (rayInteractorObject == null)
+                {
+                    Debug.LogError("RayInteractorObject is not assigned!");
+                }
+                else
+                {
+                    rayInteractor = rayInteractorObject.GetComponent<XRRayInteractor>();
+                    rayLineRenderer = rayInteractorObject.GetComponent<LineRenderer>();
+                }
             }
 
-            if (rayInteractorObject == null)
+            private void HandleMenuShow(Vector3 position)
             {
-                Debug.LogError("RayInteractorObject is not assigned!");
-            }else{
-                rayInteractor = rayInteractorObject.GetComponent<XRRayInteractor>();
-                rayLineRenderer = rayInteractorObject.GetComponent<LineRenderer>();
+                if (rayInteractor == null) return;
+
+                // Enable ray
+                rayInteractorObject.SetActive(true);
+
+                Vector3 rayOrigin = rayInteractor.transform.position;
+                Vector3 rayDirection = rayInteractor.transform.forward;
+                Vector3 menuPosition = rayOrigin + rayDirection * menuDistance;
+
+                Vector3 fromCamera = menuPosition - mainCamera.transform.position;
+                Vector3 cameraUp = mainCamera.transform.up;
+                Quaternion menuRotation = Quaternion.LookRotation(fromCamera, cameraUp);
+
+                shapeUI.ShowMenu(menuPosition, menuRotation);
             }
-        }
 
-        private void HandleMenuShow(Vector3 position)
-        {
-            if (rayInteractor == null) return;
-
-            // Enable ray
-            rayInteractorObject.SetActive(true);
-
-            Vector3 rayOrigin = rayInteractor.transform.position;
-            Vector3 rayDirection = rayInteractor.transform.forward;
-            Vector3 menuPosition = rayOrigin + rayDirection * menuDistance;
-            
-            Vector3 fromCamera = menuPosition - mainCamera.transform.position;
-            Vector3 cameraUp = mainCamera.transform.up;
-            Quaternion menuRotation = Quaternion.LookRotation(fromCamera, cameraUp);
-            
-            shapeUI.ShowMenu(menuPosition, menuRotation);
-        }
-
-        private void HandleMenuHide()
-        {
-            // Disable ray
-            rayInteractorObject.SetActive(false);
-
-            shapeUI.HideMenu();
-        }
-
-        private void OnDestroy()
-        {
-            var input = GetComponent<SetShapeInput>();
-            if (input != null)
+            private void HandleMenuHide()
             {
-                input.OnMenuShowRequest -= HandleMenuShow;
-                input.OnMenuHideRequest -= HandleMenuHide;
+                // Disable ray
+                rayInteractorObject.SetActive(false);
+
+                shapeUI.HideMenu();
+            }
+
+            private void OnDestroy()
+            {
+                var input = GetComponent<SetShapeInput>();
+                if (input != null)
+                {
+                    input.OnMenuShowRequest -= HandleMenuShow;
+                    input.OnMenuHideRequest -= HandleMenuHide;
+                }
             }
         }
     }
-} 
+}

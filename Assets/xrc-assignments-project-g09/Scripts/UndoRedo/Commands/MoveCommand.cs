@@ -1,31 +1,35 @@
 using UnityEngine;
-using UndoRedo.Core;
 
-namespace UndoRedo.Commands
+namespace XRC.Assignments.Project.G09
 {
-    public class MoveCommand : IUndoRedoCommand
+    using UndoRedo.Core;
+
+    namespace UndoRedo.Commands
     {
-        private Transform targetTransform;
-        private Vector3 previousPosition;
-        private Vector3 newPosition;
-
-        public string CommandName => "Move Object";
-
-        public MoveCommand(Transform target, Vector3 previousPos, Vector3 newPos)
+        public class MoveCommand : IUndoRedoCommand
         {
-            targetTransform = target;
-            previousPosition = previousPos;
-            newPosition = newPos;
-        }
+            private Transform targetTransform;
+            private Vector3 previousPosition;
+            private Vector3 newPosition;
 
-        public void Execute()
-        {
-            targetTransform.position = newPosition;
-        }
+            public string CommandName => "Move Object";
 
-        public void Undo()
-        {
-            targetTransform.position = previousPosition;
+            public MoveCommand(Transform target, Vector3 previousPos, Vector3 newPos)
+            {
+                targetTransform = target;
+                previousPosition = previousPos;
+                newPosition = newPos;
+            }
+
+            public void Execute()
+            {
+                targetTransform.position = newPosition;
+            }
+
+            public void Undo()
+            {
+                targetTransform.position = previousPosition;
+            }
         }
     }
-} 
+}

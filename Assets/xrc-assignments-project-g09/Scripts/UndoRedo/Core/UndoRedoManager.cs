@@ -2,163 +2,174 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
-namespace UndoRedo.Core
+namespace XRC.Assignments.Project.G09
 {
-    public class UndoRedoManager : MonoBehaviour
+    namespace UndoRedo.Core
     {
-        // Singleton Pattern
-        private static UndoRedoManager instance;
-        public static UndoRedoManager Instance
+        public class UndoRedoManager : MonoBehaviour
         {
-            get
+            // Singleton Pattern
+            private static UndoRedoManager instance;
+
+            public static UndoRedoManager Instance
             {
-                if (instance == null)
+                get
                 {
-                    instance = FindAnyObjectByType<UndoRedoManager>();
                     if (instance == null)
                     {
-                        GameObject go = new GameObject("UndoRedoManager");
-                        instance = go.AddComponent<UndoRedoManager>();
-                        DontDestroyOnLoad(go);
+                        instance = FindAnyObjectByType<UndoRedoManager>();
+                        if (instance == null)
+                        {
+                            GameObject go = new GameObject("UndoRedoManager");
+                            instance = go.AddComponent<UndoRedoManager>();
+                            DontDestroyOnLoad(go);
+                        }
+                    }
+
+                    return instance;
+                }
+            }
+
+            [SerializeField] private int maxUndoSteps = 50; // Maximum number of undo steps
+
+            [Header("Input Settings")] [SerializeField]
+            private InputActionProperty undoRedoAction;
+
+            private bool canTriggerUndoRedo = true;
+
+            [SerializeField]
+            private float undoRedoThreshold = 0.6f; // Threshold for joystick input to trigger undo/redo
+
+            private Stack<IUndoRedoCommand> undoStack = new Stack<IUndoRedoCommand>();
+            private Stack<IUndoRedoCommand> redoStack = new Stack<IUndoRedoCommand>();
+
+            public bool CanUndo => undoStack.Count > 0;
+            public bool CanRedo => redoStack.Count > 0;
+
+            private void Awake()
+            {
+                if (instance != null && instance != this)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+
+            private void OnEnable()
+            {
+                undoRedoAction.action.Enable();
+                undoRedoAction.action.performed += OnUndoRedoAction;
+                undoRedoAction.action.canceled += OnUndoRedoReleased;
+            }
+
+            private void OnDisable()
+            {
+                undoRedoAction.action.performed -= OnUndoRedoAction;
+                undoRedoAction.action.canceled -= OnUndoRedoReleased;
+                undoRedoAction.action.Disable();
+            }
+
+            private void OnUndoRedoAction(InputAction.CallbackContext context)
+            {
+                Vector2 input = context.ReadValue<Vector2>();
+                float inputX = input.x;
+
+                if (canTriggerUndoRedo)
+                {
+                    if (inputX <= -undoRedoThreshold && CanUndo)
+                    {
+                        Undo();
+                        canTriggerUndoRedo = false;
+                    }
+                    else if (inputX >= undoRedoThreshold && CanRedo)
+                    {
+                        Redo();
+                        canTriggerUndoRedo = false;
                     }
                 }
-                return instance;
             }
-        }
 
-        [SerializeField] private int maxUndoSteps = 50;  // Maximum number of undo steps
-        [Header("Input Settings")]
-        [SerializeField] private InputActionProperty undoRedoAction;
-        private bool canTriggerUndoRedo = true;
-        [SerializeField] private float undoRedoThreshold = 0.6f; // Threshold for joystick input to trigger undo/redo
-
-        private Stack<IUndoRedoCommand> undoStack = new Stack<IUndoRedoCommand>();
-        private Stack<IUndoRedoCommand> redoStack = new Stack<IUndoRedoCommand>();
-
-        public bool CanUndo => undoStack.Count > 0;
-        public bool CanRedo => redoStack.Count > 0;
-
-        private void Awake()
-        {
-            if (instance != null && instance != this)
+            private void OnUndoRedoReleased(InputAction.CallbackContext context)
             {
-                Destroy(gameObject);
-                return;
+                canTriggerUndoRedo = true;
             }
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
 
-        private void OnEnable()
-        {
-            undoRedoAction.action.Enable();
-            undoRedoAction.action.performed += OnUndoRedoAction;
-            undoRedoAction.action.canceled += OnUndoRedoReleased;
-        }
-
-        private void OnDisable()
-        {
-            undoRedoAction.action.performed -= OnUndoRedoAction;
-            undoRedoAction.action.canceled -= OnUndoRedoReleased;
-            undoRedoAction.action.Disable();
-        }
-
-        private void OnUndoRedoAction(InputAction.CallbackContext context)
-        {
-            Vector2 input = context.ReadValue<Vector2>();
-            float inputX = input.x;
-
-            if (canTriggerUndoRedo)
+            public void ExecuteCommand(IUndoRedoCommand command)
             {
-                if (inputX <= -undoRedoThreshold && CanUndo)
-                {
-                    Undo();
-                    canTriggerUndoRedo = false;
-                }
-                else if (inputX >= undoRedoThreshold && CanRedo)
-                {
-                    Redo();
-                    canTriggerUndoRedo = false;
-                }
-            }
-        }
-
-        private void OnUndoRedoReleased(InputAction.CallbackContext context)
-        {
-            canTriggerUndoRedo = true;
-        }
-
-        public void ExecuteCommand(IUndoRedoCommand command)
-        {
-            command.Execute();
-            undoStack.Push(command);
-            redoStack.Clear();
-
-            if (undoStack.Count > maxUndoSteps)
-            {
-                var tempStack = new Stack<IUndoRedoCommand>();
-                for (int i = 0; i < maxUndoSteps; i++)
-                {
-                    tempStack.Push(undoStack.Pop());
-                }
-                undoStack = new Stack<IUndoRedoCommand>(tempStack);
-            }
-        }
-
-        public void Undo()
-        {
-            if (undoStack.Count > 0)
-            {
-                var command = undoStack.Pop();
-                command.Undo();
-                redoStack.Push(command);
-            }
-        }
-
-        public void Redo()
-        {
-            if (redoStack.Count > 0)
-            {
-                var command = redoStack.Pop();
                 command.Execute();
                 undoStack.Push(command);
+                redoStack.Clear();
+
+                if (undoStack.Count > maxUndoSteps)
+                {
+                    var tempStack = new Stack<IUndoRedoCommand>();
+                    for (int i = 0; i < maxUndoSteps; i++)
+                    {
+                        tempStack.Push(undoStack.Pop());
+                    }
+
+                    undoStack = new Stack<IUndoRedoCommand>(tempStack);
+                }
+            }
+
+            public void Undo()
+            {
+                if (undoStack.Count > 0)
+                {
+                    var command = undoStack.Pop();
+                    command.Undo();
+                    redoStack.Push(command);
+                }
+            }
+
+            public void Redo()
+            {
+                if (redoStack.Count > 0)
+                {
+                    var command = redoStack.Pop();
+                    command.Execute();
+                    undoStack.Push(command);
+                }
+            }
+
+            public void ClearHistory()
+            {
+                undoStack.Clear();
+                redoStack.Clear();
             }
         }
 
-        public void ClearHistory()
+        public class MultiTransformCommand : IUndoRedoCommand
         {
-            undoStack.Clear();
-            redoStack.Clear();
-        }
-    }
+            private List<(Transform transform, Vector3 initPos, Vector3 finalPos,
+                Quaternion initRot, Quaternion finalRot)> transformations;
 
-    public class MultiTransformCommand : IUndoRedoCommand
-    {
-        private List<(Transform transform, Vector3 initPos, Vector3 finalPos, 
-                     Quaternion initRot, Quaternion finalRot)> transformations;
+            public string CommandName => "Multi Transform Change";
 
-        public string CommandName => "Multi Transform Change";
-
-        public MultiTransformCommand(List<(Transform, Vector3, Vector3, Quaternion, Quaternion)> transforms)
-        {
-            transformations = transforms;
-        }
-
-        public void Execute()
-        {
-            foreach (var t in transformations)
+            public MultiTransformCommand(List<(Transform, Vector3, Vector3, Quaternion, Quaternion)> transforms)
             {
-                t.transform.position = t.finalPos;
-                t.transform.rotation = t.finalRot;
+                transformations = transforms;
             }
-        }
 
-        public void Undo()
-        {
-            foreach (var t in transformations)
+            public void Execute()
             {
-                t.transform.position = t.initPos;
-                t.transform.rotation = t.initRot;
+                foreach (var t in transformations)
+                {
+                    t.transform.position = t.finalPos;
+                    t.transform.rotation = t.finalRot;
+                }
+            }
+
+            public void Undo()
+            {
+                foreach (var t in transformations)
+                {
+                    t.transform.position = t.initPos;
+                    t.transform.rotation = t.initRot;
+                }
             }
         }
     }

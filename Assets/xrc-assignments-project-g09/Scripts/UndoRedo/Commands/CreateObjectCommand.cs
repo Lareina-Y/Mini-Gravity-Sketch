@@ -1,46 +1,49 @@
-using UnityEngine;
-using UndoRedo.Core;
-
-namespace UndoRedo.Commands
+namespace XRC.Assignments.Project.G09
 {
-    public class CreateObjectCommand : IUndoRedoCommand
+    using UnityEngine;
+    using UndoRedo.Core;
+
+    namespace UndoRedo.Commands
     {
-        private GameObject createdObject;
-        private Vector3 position;
-        private Quaternion rotation;
-        private Vector3 scale;
-        private GameObject prefab;
-
-        public string CommandName => "Create Object";
-
-        public CreateObjectCommand(GameObject obj, GameObject prefab)
+        public class CreateObjectCommand : IUndoRedoCommand
         {
-            this.createdObject = obj;
-            this.position = obj.transform.position;
-            this.rotation = obj.transform.rotation;
-            this.scale = obj.transform.localScale;
-            this.prefab = prefab;
-        }
+            private GameObject createdObject;
+            private Vector3 position;
+            private Quaternion rotation;
+            private Vector3 scale;
+            private GameObject prefab;
 
-        public void Execute()
-        {
-            if (createdObject == null)
+            public string CommandName => "Create Object";
+
+            public CreateObjectCommand(GameObject obj, GameObject prefab)
             {
-                createdObject = GameObject.Instantiate(prefab, position, rotation);
-                createdObject.transform.localScale = scale;
+                this.createdObject = obj;
+                this.position = obj.transform.position;
+                this.rotation = obj.transform.rotation;
+                this.scale = obj.transform.localScale;
+                this.prefab = prefab;
             }
-            else
-            {
-                createdObject.SetActive(true);
-            }
-        }
 
-        public void Undo()
-        {
-            if (createdObject != null)
+            public void Execute()
             {
-                createdObject.SetActive(false);
+                if (createdObject == null)
+                {
+                    createdObject = GameObject.Instantiate(prefab, position, rotation);
+                    createdObject.transform.localScale = scale;
+                }
+                else
+                {
+                    createdObject.SetActive(true);
+                }
+            }
+
+            public void Undo()
+            {
+                if (createdObject != null)
+                {
+                    createdObject.SetActive(false);
+                }
             }
         }
     }
-} 
+}

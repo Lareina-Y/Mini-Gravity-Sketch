@@ -1,35 +1,38 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class DocumentInput : MonoBehaviour
+namespace XRC.Assignments.Project.G09
 {
-    [SerializeField] private InputActionProperty m_Documentation;
-    [SerializeField] private GameObject m_Panel;
-    
-    void Awake()
+    public class DocumentInput : MonoBehaviour
     {
-        m_Documentation.action.performed += OnOpenPanel;
-    }
+        [SerializeField] private InputActionProperty m_Documentation;
+        [SerializeField] private GameObject m_Panel;
 
-    void OnEnable()
-    {
-        m_Documentation.action.Enable();
-    }
-
-    void OnDisable()
-    {
-        m_Documentation.action.Disable();
-    }
-
-    private void OnOpenPanel(InputAction.CallbackContext context)
-    {
-        if (m_Panel.activeSelf)
+        void Awake()
         {
-            m_Panel.SetActive(false);
+            m_Documentation.action.performed += OnOpenPanel;
         }
-        else
+
+        void OnEnable()
         {
-            m_Panel.SetActive(true);
+            m_Documentation.action.Enable();
+        }
+
+        void OnDisable()
+        {
+            m_Documentation.action.Disable();
+        }
+
+        private void OnOpenPanel(InputAction.CallbackContext context)
+        {
+            if (m_Panel.activeSelf)
+            {
+                m_Panel.SetActive(false);
+            }
+            else
+            {
+                m_Panel.SetActive(true);
+            }
         }
     }
 }

@@ -2,88 +2,93 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace SetShape
+namespace XRC.Assignments.Project.G09
 {
-    public class SetShapeInput : MonoBehaviour
+    namespace SetShape
     {
-        [SerializeField] private InputActionProperty m_showMenuAction;
-        [SerializeField] private float holdThreshold = 0.5f;
-        
-        public delegate void MenuShowEventHandler(Vector3 position);
-        public delegate void MenuHideEventHandler();
-
-        public event MenuShowEventHandler OnMenuShowRequest;
-        public event MenuHideEventHandler OnMenuHideRequest;
-
-        private bool isButtonPressed = false;
-        private float pressStartTime;
-        private bool hasTriggeredHold = false;
-        private SetShapeLogic setShapeLogic;
-
-        private void Start()
+        public class SetShapeInput : MonoBehaviour
         {
-            setShapeLogic = GetComponent<SetShapeLogic>();
-            
-            if (m_showMenuAction != null)
-            {
-                m_showMenuAction.action.started += OnShowMenuInput;
-                m_showMenuAction.action.canceled += OnHideMenuInput;
-            }
-        }
+            [SerializeField] private InputActionProperty m_showMenuAction;
+            [SerializeField] private float holdThreshold = 0.5f;
 
-        private void Update()
-        {
-            if (isButtonPressed && !hasTriggeredHold)
+            public delegate void MenuShowEventHandler(Vector3 position);
+
+            public delegate void MenuHideEventHandler();
+
+            public event MenuShowEventHandler OnMenuShowRequest;
+            public event MenuHideEventHandler OnMenuHideRequest;
+
+            private bool isButtonPressed = false;
+            private float pressStartTime;
+            private bool hasTriggeredHold = false;
+            private SetShapeLogic setShapeLogic;
+
+            private void Start()
             {
-                if (Time.time - pressStartTime >= holdThreshold)
+                setShapeLogic = GetComponent<SetShapeLogic>();
+
+                if (m_showMenuAction != null)
                 {
-                    hasTriggeredHold = true;
-                    Vector3 cameraPosition = Camera.main.transform.position;
-                    OnMenuShowRequest?.Invoke(cameraPosition);
+                    m_showMenuAction.action.started += OnShowMenuInput;
+                    m_showMenuAction.action.canceled += OnHideMenuInput;
                 }
             }
-        }
 
-        private void OnEnable()
-        {
-            if (m_showMenuAction != null)
+            private void Update()
             {
-                m_showMenuAction.action.Enable();
+                if (isButtonPressed && !hasTriggeredHold)
+                {
+                    if (Time.time - pressStartTime >= holdThreshold)
+                    {
+                        hasTriggeredHold = true;
+                        Vector3 cameraPosition = Camera.main.transform.position;
+                        OnMenuShowRequest?.Invoke(cameraPosition);
+                    }
+                }
             }
-        }
 
-        private void OnDisable()
-        {
-            if (m_showMenuAction != null)
+            private void OnEnable()
             {
-                m_showMenuAction.action.Disable();
+                if (m_showMenuAction != null)
+                {
+                    m_showMenuAction.action.Enable();
+                }
             }
-        }
 
-        private void OnDestroy()
-        {
-            if (m_showMenuAction != null)
+            private void OnDisable()
             {
-                m_showMenuAction.action.started -= OnShowMenuInput;
-                m_showMenuAction.action.canceled -= OnHideMenuInput;
+                if (m_showMenuAction != null)
+                {
+                    m_showMenuAction.action.Disable();
+                }
             }
-        }
 
-        private void OnShowMenuInput(InputAction.CallbackContext context)
-        {
-            isButtonPressed = true;
-            pressStartTime = Time.time;
-            hasTriggeredHold = false;
-        }
-
-        private void OnHideMenuInput(InputAction.CallbackContext context)
-        {
-            isButtonPressed = false;
-            if (hasTriggeredHold)
+            private void OnDestroy()
             {
-                OnMenuHideRequest?.Invoke();
+                if (m_showMenuAction != null)
+                {
+                    m_showMenuAction.action.started -= OnShowMenuInput;
+                    m_showMenuAction.action.canceled -= OnHideMenuInput;
+                }
             }
-            hasTriggeredHold = false;
+
+            private void OnShowMenuInput(InputAction.CallbackContext context)
+            {
+                isButtonPressed = true;
+                pressStartTime = Time.time;
+                hasTriggeredHold = false;
+            }
+
+            private void OnHideMenuInput(InputAction.CallbackContext context)
+            {
+                isButtonPressed = false;
+                if (hasTriggeredHold)
+                {
+                    OnMenuHideRequest?.Invoke();
+                }
+
+                hasTriggeredHold = false;
+            }
         }
     }
 }

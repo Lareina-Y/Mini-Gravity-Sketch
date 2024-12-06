@@ -1,50 +1,54 @@
 using UnityEngine;
-using UndoRedo.Core;
 
-namespace UndoRedo.Commands
+namespace XRC.Assignments.Project.G09
 {
-    public class DeleteObjectCommand : IUndoRedoCommand
+    using UndoRedo.Core;
+
+    namespace UndoRedo.Commands
     {
-        private GameObject deletedObject;
-        private Vector3 position;
-        private Quaternion rotation;
-        private Vector3 scale;
-
-        public string CommandName => "Delete Object";
-
-        public DeleteObjectCommand(GameObject obj)
+        public class DeleteObjectCommand : IUndoRedoCommand
         {
-            this.deletedObject = obj;
-            this.position = obj.transform.position;
-            this.rotation = obj.transform.rotation;
-            this.scale = obj.transform.localScale;
-        }
+            private GameObject deletedObject;
+            private Vector3 position;
+            private Quaternion rotation;
+            private Vector3 scale;
 
-        public DeleteObjectCommand(GameObject obj, Vector3 initialPosition, Quaternion initialRotation)
-        {
-            this.deletedObject = obj;
-            this.position = initialPosition;
-            this.rotation = initialRotation;
-            this.scale = obj.transform.localScale;
-        }
+            public string CommandName => "Delete Object";
 
-        public void Execute()
-        {
-            if (deletedObject != null)
+            public DeleteObjectCommand(GameObject obj)
             {
-                deletedObject.SetActive(false);
+                this.deletedObject = obj;
+                this.position = obj.transform.position;
+                this.rotation = obj.transform.rotation;
+                this.scale = obj.transform.localScale;
             }
-        }
 
-        public void Undo()
-        {
-            if (deletedObject != null)
+            public DeleteObjectCommand(GameObject obj, Vector3 initialPosition, Quaternion initialRotation)
             {
-                deletedObject.SetActive(true);
-                deletedObject.transform.position = position;
-                deletedObject.transform.rotation = rotation;
-                deletedObject.transform.localScale = scale;
+                this.deletedObject = obj;
+                this.position = initialPosition;
+                this.rotation = initialRotation;
+                this.scale = obj.transform.localScale;
+            }
+
+            public void Execute()
+            {
+                if (deletedObject != null)
+                {
+                    deletedObject.SetActive(false);
+                }
+            }
+
+            public void Undo()
+            {
+                if (deletedObject != null)
+                {
+                    deletedObject.SetActive(true);
+                    deletedObject.transform.position = position;
+                    deletedObject.transform.rotation = rotation;
+                    deletedObject.transform.localScale = scale;
+                }
             }
         }
     }
-} 
+}

@@ -2,74 +2,78 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-namespace SetShape
+namespace XRC.Assignments.Project.G09
 {
-    [RequireComponent(typeof(SetShapeInput))]
-    [RequireComponent(typeof(SetShapeUI))]
-    [RequireComponent(typeof(SetShapeFeedback))]
-    public class SetShapeLogic : MonoBehaviour
+    namespace SetShape
     {
-        public enum ShapeType
+        [RequireComponent(typeof(SetShapeInput))]
+        [RequireComponent(typeof(SetShapeUI))]
+        [RequireComponent(typeof(SetShapeFeedback))]
+        public class SetShapeLogic : MonoBehaviour
         {
-            Cube,
-            Sphere,
-            Cylinder,
-            Capsule,
-            Torus,
-            Cone,
-            Plane,
-            Text
-        }
-
-        [System.Serializable]
-        public class ShapeData
-        {
-            public ShapeType type;
-            public GameObject prefab;
-        }
-
-        [SerializeField] private List<ShapeData> shapeList = new List<ShapeData>();
-        private ShapeType currentShapeType = ShapeType.Cube; // Default shape
-        
-        // Event triggered when the current shape changes
-        public delegate void ShapeChangedEventHandler(ShapeType newShape);
-        public event ShapeChangedEventHandler OnShapeChanged;
-
-        public ShapeType CurrentShapeType => currentShapeType;
-
-        private void Start()
-        {
-            ValidateShapeList();
-        }
-
-        public GameObject GetCurrentShapePrefab()
-        {
-            return shapeList.Find(s => s.type == currentShapeType)?.prefab;
-        }
-
-        public void SetCurrentShape(ShapeType shapeType)
-        {
-            if (currentShapeType != shapeType)
+            public enum ShapeType
             {
-                currentShapeType = shapeType;
-                OnShapeChanged?.Invoke(currentShapeType);
-                Debug.Log($"Shape changed to: {currentShapeType}");
-            }
-        }
-
-        private void ValidateShapeList()
-        {
-            if (shapeList.Count != Enum.GetValues(typeof(ShapeType)).Length)
-            {
-                Debug.LogError("Shape list is not complete!");
-                return;
+                Cube,
+                Sphere,
+                Cylinder,
+                Capsule,
+                Torus,
+                Cone,
+                Plane,
+                Text
             }
 
-            foreach (var shapeData in shapeList)
+            [System.Serializable]
+            public class ShapeData
             {
-                if (shapeData.prefab == null)
+                public ShapeType type;
+                public GameObject prefab;
+            }
+
+            [SerializeField] private List<ShapeData> shapeList = new List<ShapeData>();
+            private ShapeType currentShapeType = ShapeType.Cube; // Default shape
+
+            // Event triggered when the current shape changes
+            public delegate void ShapeChangedEventHandler(ShapeType newShape);
+
+            public event ShapeChangedEventHandler OnShapeChanged;
+
+            public ShapeType CurrentShapeType => currentShapeType;
+
+            private void Start()
+            {
+                ValidateShapeList();
+            }
+
+            public GameObject GetCurrentShapePrefab()
+            {
+                return shapeList.Find(s => s.type == currentShapeType)?.prefab;
+            }
+
+            public void SetCurrentShape(ShapeType shapeType)
+            {
+                if (currentShapeType != shapeType)
                 {
-                    Debug.LogError($"Prefab for shape {shapeData.type} is not assigned!");
+                    currentShapeType = shapeType;
+                    OnShapeChanged?.Invoke(currentShapeType);
+                    Debug.Log($"Shape changed to: {currentShapeType}");
+                }
+            }
+
+            private void ValidateShapeList()
+            {
+                if (shapeList.Count != Enum.GetValues(typeof(ShapeType)).Length)
+                {
+                    Debug.LogError("Shape list is not complete!");
+                    return;
+                }
+
+                foreach (var shapeData in shapeList)
+                {
+                    if (shapeData.prefab == null)
+                    {
+                        Debug.LogError($"Prefab for shape {shapeData.type} is not assigned!");
+                    }
                 }
             }
         }

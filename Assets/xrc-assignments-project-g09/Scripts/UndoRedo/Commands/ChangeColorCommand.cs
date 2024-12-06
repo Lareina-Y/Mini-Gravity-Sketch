@@ -1,31 +1,34 @@
-using UnityEngine;
-using UndoRedo.Core;
-
-namespace UndoRedo.Commands
+namespace XRC.Assignments.Project.G09
 {
-    public class ChangeColorCommand : IUndoRedoCommand
+    using UnityEngine;
+    using UndoRedo.Core;
+
+    namespace UndoRedo.Commands
     {
-        private Renderer targetRenderer;
-        private Color initialColor;
-        private Color newColor;
-
-        public string CommandName => "Change Color";
-
-        public ChangeColorCommand(Renderer renderer, Color initialColor, Color newColor)
+        public class ChangeColorCommand : IUndoRedoCommand
         {
-            this.targetRenderer = renderer;
-            this.initialColor = initialColor;
-            this.newColor = newColor;
-        }
+            private Renderer targetRenderer;
+            private Color initialColor;
+            private Color newColor;
 
-        public void Execute()
-        {
-            targetRenderer.material.color = newColor;
-        }
+            public string CommandName => "Change Color";
 
-        public void Undo()
-        {
-            targetRenderer.material.color = initialColor;
+            public ChangeColorCommand(Renderer renderer, Color initialColor, Color newColor)
+            {
+                this.targetRenderer = renderer;
+                this.initialColor = initialColor;
+                this.newColor = newColor;
+            }
+
+            public void Execute()
+            {
+                targetRenderer.material.color = newColor;
+            }
+
+            public void Undo()
+            {
+                targetRenderer.material.color = initialColor;
+            }
         }
     }
-} 
+}
