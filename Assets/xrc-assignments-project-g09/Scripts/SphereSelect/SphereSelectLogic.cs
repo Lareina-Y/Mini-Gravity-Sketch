@@ -229,18 +229,17 @@ public class SphereSelectLogic : MonoBehaviour
 
     private void SelectObjects(Vector3 position, MeshSelectionUI.SelectionMode mode)
     {
-        // Use Physics.OverlapSphere to detect objects in range
+        // Detect objects in range
         Collider[] colliders = Physics.OverlapSphere(position, sphereCollider.radius);
         List<MeshRenderer> selectedRenderers = new List<MeshRenderer>();
 
         foreach (Collider collider in colliders)
         {
-
             if (collider.gameObject.TryGetComponent(out MeshRenderer meshRenderer))
             {
                 selectedRenderers.Add(meshRenderer);
                 
-                // Record initial transform
+                // Store initial transform
                 GameObject obj = collider.gameObject;
                 initialTransforms.Add((
                     obj,
@@ -261,13 +260,20 @@ public class SphereSelectLogic : MonoBehaviour
             }
         }
 
-        // Trigger the feedback event with the selected renderers
         OnSelectEnteredEvent?.Invoke(selectedRenderers);
     }
 
     private void OnSelectExited(SelectExitEventArgs args)
     {
-        // Handle all transformed objects
+        // Skip creating transform command if we're switching to color change mode
+        if (ChangeColorLogic.IsChangingColor)
+        {
+            OnSelectExitedEvent?.Invoke(args);
+            return;
+        }
+
+        var transformations = new List<(Transform, Vector3, Vector3, Quaternion, Quaternion)>();
+        
         foreach (var (obj, initPos, initRot) in initialTransforms)
         {
             if (obj != null)
@@ -275,15 +281,21 @@ public class SphereSelectLogic : MonoBehaviour
                 Vector3 finalPosition = obj.transform.position;
                 Quaternion finalRotation = obj.transform.rotation;
 
+                // Record changes if transform is modified
                 if (initPos != finalPosition || initRot != finalRotation)
                 {
-                    var transformCommand = new TransformCommand(obj.transform, initPos, finalPosition, initRot, finalRotation);
-                    UndoRedoManager.Instance.ExecuteCommand(transformCommand);
+                    transformations.Add((obj.transform, initPos, finalPosition, initRot, finalRotation));
                 }
             }
         }
 
-        // Clear the transforms list
+        // Create and execute multi-transform command if changes exist
+        if (transformations.Count > 0)
+        {
+            var multiCommand = new MultiTransformCommand(transformations);
+            UndoRedoManager.Instance.ExecuteCommand(multiCommand);
+        }
+
         OnSelectExitedEvent?.Invoke(args);
     }
 

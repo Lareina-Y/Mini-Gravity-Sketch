@@ -4,6 +4,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using System.Linq;
+using UndoRedo.Core;
+using UndoRedo.Commands;
 
 public class DeleteObj : MonoBehaviour
 {
@@ -43,17 +45,16 @@ public class DeleteObj : MonoBehaviour
             return;
         }
         
-        // Create a list of interactables cast to XRBaseInteractable
         List<XRBaseInteractable> interactablesToDelete = m_Interactor.interactablesSelected
             .OfType<XRBaseInteractable>()
             .ToList();
 
-        // Iterate through the copied list and destroy each object
         foreach (var interactable in interactablesToDelete)
         {
             GameObject selectedObject = interactable.transform.gameObject;
-            Destroy(selectedObject);
+            
+            var deleteCommand = new DeleteObjectCommand(selectedObject);
+            UndoRedoManager.Instance.ExecuteCommand(deleteCommand);
         }
-        
     }
 }

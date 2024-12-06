@@ -4,6 +4,8 @@ using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using System.Collections.Generic;
+using UndoRedo.Core;
+using UndoRedo.Commands;
 
 /// <summary>
 /// Contains the main logic for Color Change.
@@ -29,8 +31,10 @@ public class ChangeColorLogic : MonoBehaviour
     private GameObject m_TargetObject; // TODO: material issue
 
     private bool m_IsChanging;
+    private Color m_InitialColor;
     
     public XRBaseInteractor interactor => m_Interactor;
+    public static bool IsChangingColor { get; private set; }
 
     void Awake()
     {
@@ -82,8 +86,7 @@ public class ChangeColorLogic : MonoBehaviour
         if (eventArgs.interactableObject is IXRSelectInteractable selectInteractable)
         {
             m_TargetObject = selectInteractable.transform.gameObject;
-            
-            // Get attach pose
+            m_InitialColor = m_TargetObject.GetComponent<Renderer>().material.color;
             m_AttachPose = selectInteractable.GetAttachPoseOnSelect(m_Interactor);
         }
     }
@@ -92,6 +95,8 @@ public class ChangeColorLogic : MonoBehaviour
     {
         if (m_TargetObject != null)
         {
+            IsChangingColor = true;
+            
             // Release the object and move to poseOnSelect
             m_Interactor.interactionManager.SelectExit(m_Interactor, m_Interactor.firstInteractableSelected);        
             m_ColorPanel.SetActive(true);
@@ -114,9 +119,24 @@ public class ChangeColorLogic : MonoBehaviour
 
     public void EndChangeColor()
     {
+        if (m_TargetObject != null)
+        {
+            Color finalColor = m_TargetObject.GetComponent<Renderer>().material.color;
+            if (m_InitialColor != finalColor)
+            {
+                var changeColorCommand = new ChangeColorCommand(
+                    m_TargetObject.GetComponent<Renderer>(),
+                    m_InitialColor,
+                    finalColor
+                );
+                UndoRedoManager.Instance.ExecuteCommand(changeColorCommand);
+            }
+        }
+
         m_TargetObject = null;
         m_ColorPanel.SetActive(false);
         m_Pointer.SetActive(false);
         m_IsChanging = false;
+        IsChangingColor = false;
     }
 }

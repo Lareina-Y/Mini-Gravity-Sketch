@@ -30,7 +30,7 @@ namespace UndoRedo.Core
         [Header("Input Settings")]
         [SerializeField] private InputActionProperty undoRedoAction;
         private bool canTriggerUndoRedo = true;
-        private float undoRedoThreshold = 0.8f; // Threshold for joystick input to trigger undo/redo
+        [SerializeField] private float undoRedoThreshold = 0.6f; // Threshold for joystick input to trigger undo/redo
 
         private Stack<IUndoRedoCommand> undoStack = new Stack<IUndoRedoCommand>();
         private Stack<IUndoRedoCommand> redoStack = new Stack<IUndoRedoCommand>();
@@ -68,7 +68,6 @@ namespace UndoRedo.Core
             Vector2 input = context.ReadValue<Vector2>();
             float inputX = input.x;
 
-            // Only trigger when allowed and threshold is reached
             if (canTriggerUndoRedo)
             {
                 if (inputX <= -undoRedoThreshold && CanUndo)
@@ -86,7 +85,7 @@ namespace UndoRedo.Core
 
         private void OnUndoRedoReleased(InputAction.CallbackContext context)
         {
-            canTriggerUndoRedo = true; // Allow new triggers when joystick returns to center
+            canTriggerUndoRedo = true;
         }
 
         public void ExecuteCommand(IUndoRedoCommand command)
@@ -108,29 +107,21 @@ namespace UndoRedo.Core
 
         public void Undo()
         {
-            if (CanUndo)
+            if (undoStack.Count > 0)
             {
                 var command = undoStack.Pop();
                 command.Undo();
                 redoStack.Push(command);
             }
-            else
-            {
-                Debug.Log("Undo: No command to undo");
-            }
         }
 
         public void Redo()
         {
-            if (CanRedo)
+            if (redoStack.Count > 0)
             {
                 var command = redoStack.Pop();
                 command.Execute();
                 undoStack.Push(command);
-            }
-            else
-            {
-                Debug.Log("Redo: No command to redo");
             }
         }
 
@@ -138,6 +129,37 @@ namespace UndoRedo.Core
         {
             undoStack.Clear();
             redoStack.Clear();
+        }
+    }
+
+    public class MultiTransformCommand : IUndoRedoCommand
+    {
+        private List<(Transform transform, Vector3 initPos, Vector3 finalPos, 
+                     Quaternion initRot, Quaternion finalRot)> transformations;
+
+        public string CommandName => "Multi Transform Change";
+
+        public MultiTransformCommand(List<(Transform, Vector3, Vector3, Quaternion, Quaternion)> transforms)
+        {
+            transformations = transforms;
+        }
+
+        public void Execute()
+        {
+            foreach (var t in transformations)
+            {
+                t.transform.position = t.finalPos;
+                t.transform.rotation = t.finalRot;
+            }
+        }
+
+        public void Undo()
+        {
+            foreach (var t in transformations)
+            {
+                t.transform.position = t.initPos;
+                t.transform.rotation = t.initRot;
+            }
         }
     }
 }

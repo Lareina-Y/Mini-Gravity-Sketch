@@ -6,6 +6,8 @@ using UnityEngine.XR.Interaction.Toolkit.Transformers;
 using UnityEngine.XR.Interaction.Toolkit;
 
 using SetShape;
+using UndoRedo.Core;
+using UndoRedo.Commands;
 
 public class ObjCreator : MonoBehaviour
 {
@@ -60,9 +62,7 @@ public class ObjCreator : MonoBehaviour
             // Disable grabbing of the original object
             IXRSelectInteractable currentInteractable = m_Interactor.firstInteractableSelected;
 
-            // m_Interactor.interactionManager.CancelInteractableSelection(currentInteractable);
-
-            // // Ensure the original object is no longer selected
+            // Exit selection of original object
             m_Interactor.interactionManager.SelectExit(m_Interactor, currentInteractable);
             m_Interactor.interactionManager.CancelInteractableSelection(currentInteractable);
 
@@ -70,14 +70,15 @@ public class ObjCreator : MonoBehaviour
             GameObject currentObject = currentInteractable.transform.gameObject;
             GameObject duplicatedObject = GameObject.Instantiate(currentObject);
             SetInteractable(duplicatedObject);
-            IXRSelectInteractable duplicatedInteractable = duplicatedObject.GetComponent<IXRSelectInteractable>();
 
-
+            // Create and execute create command for the duplicated object
+            var createCommand = new CreateObjectCommand(duplicatedObject, currentObject);
+            UndoRedoManager.Instance.ExecuteCommand(createCommand);
 
             // Force the interactor to grab the duplicate object
+            IXRSelectInteractable duplicatedInteractable = duplicatedObject.GetComponent<IXRSelectInteractable>();
             m_Interactor.interactionManager.SelectEnter(m_Interactor, duplicatedInteractable);
             m_Interactor.interactionManager.CancelInteractableSelection(currentInteractable);
-            // m_Interactor.interactionManager.SelectExit(m_Interactor, currentInteractable);
 
             return;
         }
@@ -161,8 +162,14 @@ public class ObjCreator : MonoBehaviour
         {
             // Make the object fully opaque
             Color currColor = ChangeColorLogic.Instance.Color;
-            
             previewObject.GetComponent<MeshRenderer>().material.color = currColor;
+
+            // Create and execute create command
+            var createCommand = new CreateObjectCommand(
+                previewObject, 
+                setShapeLogic.GetCurrentShapePrefab()
+            );
+            UndoRedoManager.Instance.ExecuteCommand(createCommand);
 
             previewObject = null;
         }

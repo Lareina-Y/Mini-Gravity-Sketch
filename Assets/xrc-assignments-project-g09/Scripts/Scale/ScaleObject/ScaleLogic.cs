@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using System.Collections.Generic;
+using UndoRedo.Core;
+using UndoRedo.Commands;
 
 public enum ScaleType
 {
@@ -36,7 +39,8 @@ public class ScaleLogic : MonoBehaviour
     public bool IsScaleActive => m_IsScaleActive;
 
     private ScaleType m_ScaleType = ScaleType.None;
-    
+    private Vector3 m_InitialScale;
+
     void OnEnable()
     {
         m_Interactor.selectEntered.AddListener(OnSelectEntered);
@@ -72,6 +76,7 @@ public class ScaleLogic : MonoBehaviour
             if (m_IsScaleActive == false)
             {
                 m_TargetObject = selected;
+                m_InitialScale = m_TargetObject.transform.localScale;  // Store initial scale
                 
                 m_X = m_TargetObject.transform.localScale.x;
                 m_Y = m_TargetObject.transform.localScale.y;
@@ -100,6 +105,22 @@ public class ScaleLogic : MonoBehaviour
     {
         if (eventArgs.interactableObject is IXRSelectInteractable selectInteractable)
         { 
+            if (m_TargetObject != null)
+            {
+                Vector3 finalScale = m_TargetObject.transform.localScale;
+                
+                // Only create command if scale actually changed
+                if (m_InitialScale != finalScale)
+                {
+                    var scaleCommand = new ScaleCommand(
+                        m_TargetObject.transform,
+                        m_InitialScale,
+                        finalScale
+                    );
+                    UndoRedoManager.Instance.ExecuteCommand(scaleCommand);
+                }
+            }
+            
             m_ScaleType = ScaleType.None;
         }
     }
