@@ -52,13 +52,21 @@ public class ScaleLogic : MonoBehaviour
     // Update the axis position every frame
     void Update()
     {
-        if (m_IsScaleActive && m_TargetObject != null)
+        if (m_IsScaleActive)
         {
-            UpdateScale();
+            if (m_TargetObject != null)
+            {
+                UpdateScale();
             
-            UpdateAxesRotation();
-            UpdateAxesPosition();
+                UpdateAxesRotation();
+                UpdateAxesPosition();
+            }
+            else
+            {
+                EndScale();
+            }
         }
+        
         
         m_PreviousRightPosition = m_RightTransform.position;
     }
