@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1674550334902619831}
   - component: {fileID: 6847051638640258233}
   m_Layer: 0
-  m_Name: ScaleObject
+  m_Name: '[Feature] ScaleObject'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
